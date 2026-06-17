@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# local data & secrets (never commit)
+.data/
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# misc
+*.log
+.DS_Store
+/tmp/
