@@ -1,5 +1,6 @@
 import { getHerdeckeSchools, getSchoolHolidays, type School } from '@/lib/sources/schools';
 import { getT } from '@/lib/i18n-server';
+import { FlagStack } from '../components/FlagStack';
 
 export const revalidate = 86400;
 export const metadata = { title: 'Schulen & Ferien — Digital.Herdecke' };
@@ -26,6 +27,7 @@ export default async function SchulenPage() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
+        <FlagStack />
         <h1 style={{ fontSize: 26 }}>{t('Schulen & Ferien')}</h1>
         <p className="lead">{t('Alle Schulen in Herdecke und die kommenden Schulferien in Nordrhein-Westfalen.')}</p>
       </section>

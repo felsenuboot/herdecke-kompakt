@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { listUpcomingMeetings, type Meeting } from '@/sessionnet';
 import { getT } from '@/lib/i18n-server';
+import { FlagStack } from '../components/FlagStack';
 
 export const revalidate = 1800;
 export const metadata = { title: 'Sitzungen — Digital.Herdecke' };
@@ -23,6 +24,7 @@ export default async function SitzungenPage() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
+        <FlagStack />
         <h1 style={{ fontSize: 26 }}>{t('Kommende Ratssitzungen')}</h1>
         <p className="lead">
           {t('Rat, Ausschüsse und Gremien der Stadt Herdecke. Tagesordnungen erscheinen meist wenige Tage vor der Sitzung.')}

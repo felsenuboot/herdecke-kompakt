@@ -1,11 +1,13 @@
 import { contact, b64, emailFallback, phoneFallback } from '@/lib/site';
 import { Contact } from '../components/Contact';
+import { FlagStack } from '../components/FlagStack';
 
 export const metadata = { title: 'Impressum — Digital.Herdecke' };
 
 export default function ImpressumPage() {
   return (
     <section className="section prose">
+      <FlagStack />
       <h1>Impressum</h1>
 
       <p>Angaben gemäß § 5 DDG</p>

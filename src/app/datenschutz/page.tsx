@@ -1,11 +1,13 @@
 import { contact, b64, emailFallback, phoneFallback } from '@/lib/site';
 import { Contact } from '../components/Contact';
+import { FlagStack } from '../components/FlagStack';
 
 export const metadata = { title: 'Datenschutz — Digital.Herdecke' };
 
 export default function DatenschutzPage() {
   return (
     <section className="section prose">
+      <FlagStack />
       <h1>Datenschutzerklärung</h1>
 
       <h2>1. Datenschutz auf einen Blick</h2>

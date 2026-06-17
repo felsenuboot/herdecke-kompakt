@@ -1,6 +1,7 @@
 import { MuellForm } from '../components/MuellForm';
 import { wasteInfo } from '@/lib/sources/waste';
 import { getT } from '@/lib/i18n-server';
+import { FlagStack } from '../components/FlagStack';
 
 export const metadata = { title: 'Müll-Wecker — Digital.Herdecke' };
 
@@ -9,6 +10,7 @@ export default async function MuellPage() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 8 }}>
+        <FlagStack />
         <h1 style={{ fontSize: 26 }}>{t('Müll-Wecker')}</h1>
         <p className="lead">
           {t(
