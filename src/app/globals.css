@@ -89,12 +89,15 @@ a { color: var(--accent); }
 }
 .dashboard-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; color: var(--muted); }
 .linklike { background: none; border: 0; color: var(--accent); cursor: pointer; font-size: 13px; padding: 0; }
-.overview-item { display: flex; cursor: grab; }
-.overview-item > * { width: 100%; }
-.overview-item:active { cursor: grabbing; }
-.overview-item.dragging { opacity: 0.45; }
-.overview-item.dragover { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 14px; }
+.overview-item { position: relative; display: flex; }
+.overview-item > .data-card { width: 100%; }
+.overview-item.dragging { opacity: 0.5; }
+.tile-grip { position: absolute; right: 6px; bottom: 6px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: grab; touch-action: none; font-size: 15px; opacity: 0.4; }
+.tile-grip:hover, .tile-grip:focus-visible { opacity: 1; background: #f0f0ec; }
+.tile-grip:active { cursor: grabbing; }
 .muell-next-when { font-weight: 600; margin-bottom: 8px; }
+.muell-grp + .muell-grp { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.muell-grp:not(.muell-grp-next) .muell-next-when { font-weight: 500; color: var(--muted); }
 .data-card {
   background: var(--card);
   border: 1px solid var(--line);

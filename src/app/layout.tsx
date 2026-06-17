@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
+import { ShareButton } from './components/ShareButton';
 
 export const metadata: Metadata = {
   title: 'Digital.Herdecke — Wetter, Verkehr, Ruhr-Pegel & Stadtrat',
@@ -34,6 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span>Ein unabhängiges Bürger-Projekt. Keine offizielle Seite der Stadt Herdecke.</span>
             <Link href="/datenschutz">Datenschutz</Link>
             <Link href="/impressum">Impressum</Link>
+            <a href="https://github.com/felsenuboot/herdecke-kompakt" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+            <ShareButton />
           </div>
         </footer>
       </body>

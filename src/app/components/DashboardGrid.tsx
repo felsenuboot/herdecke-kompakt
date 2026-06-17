@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface DashboardItem {
   id: string;
@@ -9,14 +9,16 @@ export interface DashboardItem {
 
 const STORAGE_KEY = 'dashboard-order';
 
-/** Drag-and-drop reorderable dashboard grid; order persisted per browser. */
+/**
+ * Reorderable dashboard grid. Uses Pointer Events on a per-tile grip, so it
+ * works with mouse, touch (iPad) and pen alike; order persisted per browser.
+ */
 export function DashboardGrid({ items }: { items: DashboardItem[] }) {
   const defaultOrder = items.map((i) => i.id);
   const [order, setOrder] = useState<string[]>(defaultOrder);
   const [dragId, setDragId] = useState<string | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
+  const dragIdRef = useRef<string | null>(null);
 
-  // Restore saved order, keeping it in sync with the current set of cards.
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as string[] | null;
@@ -32,8 +34,7 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
 
-  function persist(next: string[]) {
-    setOrder(next);
+  function save(next: string[]) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch {
@@ -41,12 +42,39 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
     }
   }
 
-  function reorder(targetId: string) {
-    if (!dragId || dragId === targetId) return;
-    const next = [...order];
-    next.splice(next.indexOf(dragId), 1);
-    next.splice(next.indexOf(targetId), 0, dragId);
-    persist(next);
+  function onPointerDown(e: React.PointerEvent, id: string) {
+    e.preventDefault();
+    dragIdRef.current = id;
+    setDragId(id);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    const id = dragIdRef.current;
+    if (!id) return;
+    e.preventDefault();
+    const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+    const overId = (el?.closest('[data-tile-id]') as HTMLElement | null)?.dataset.tileId;
+    if (!overId || overId === id) return;
+    setOrder((cur) => {
+      const from = cur.indexOf(id);
+      const to = cur.indexOf(overId);
+      if (from === -1 || to === -1) return cur;
+      const next = [...cur];
+      next.splice(from, 1);
+      next.splice(to, 0, id);
+      return next;
+    });
+  }
+
+  function onPointerUp() {
+    if (!dragIdRef.current) return;
+    dragIdRef.current = null;
+    setDragId(null);
+    setOrder((cur) => {
+      save(cur);
+      return cur;
+    });
   }
 
   function reset() {
@@ -65,7 +93,7 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
   return (
     <>
       <div className="dashboard-toolbar">
-        <span>↕ Kacheln per Ziehen anordnen</span>
+        <span>⠿ Kacheln am Griff anordnen</span>
         {customised && (
           <button type="button" className="linklike" onClick={reset}>
             Zurücksetzen
@@ -74,28 +102,19 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
       </div>
       <div className="overview">
         {ordered.map((id) => (
-          <div
-            key={id}
-            className={`overview-item${dragId === id ? ' dragging' : ''}${
-              overId === id && dragId !== id ? ' dragover' : ''
-            }`}
-            draggable
-            onDragStart={() => setDragId(id)}
-            onDragOver={(e) => {
-              e.preventDefault();
-              if (overId !== id) setOverId(id);
-            }}
-            onDragLeave={() => setOverId((o) => (o === id ? null : o))}
-            onDrop={() => {
-              reorder(id);
-              setOverId(null);
-            }}
-            onDragEnd={() => {
-              setDragId(null);
-              setOverId(null);
-            }}
-          >
+          <div key={id} data-tile-id={id} className={`overview-item${dragId === id ? ' dragging' : ''}`}>
             {byId.get(id)}
+            <button
+              type="button"
+              className="tile-grip"
+              aria-label="Kachel verschieben"
+              onPointerDown={(e) => onPointerDown(e, id)}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
+            >
+              ⠿
+            </button>
           </div>
         ))}
       </div>

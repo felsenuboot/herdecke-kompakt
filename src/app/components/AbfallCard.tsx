@@ -68,8 +68,14 @@ export function AbfallCard() {
     };
   }, [addr]);
 
-  const firstDate = result?.pickups[0]?.date;
-  const dueNext = result?.pickups.filter((p) => p.date === firstDate) ?? [];
+  // Group pickups by date, keep the next two collection days.
+  const groups: { date: string; types: string[] }[] = [];
+  for (const p of result?.pickups ?? []) {
+    const g = groups.find((x) => x.date === p.date);
+    if (g) g.types.push(p.type);
+    else groups.push({ date: p.date, types: [p.type] });
+  }
+  const nextTwo = groups.slice(0, 2);
 
   return (
     <div className="data-card">
@@ -84,22 +90,26 @@ export function AbfallCard() {
           <p className="metric-detail" style={{ marginTop: 0 }}>
             Trage deine Straße ein, um hier die nächste Abfuhr zu sehen.
           </p>
-        ) : firstDate ? (
-          <div>
-            <div className="muell-next-when">
-              {fmtDate(firstDate)}
-              {relative(firstDate) && <span className="muell-rel"> · {relative(firstDate)}</span>}
-            </div>
-            <div className="muell-types">
-              {dueNext.map((p, i) => {
-                const f = fractionClass(p.type);
-                return (
-                  <span key={i} className={`frac frac-${f.cls}`}>
-                    {f.emoji} {p.type}
-                  </span>
-                );
-              })}
-            </div>
+        ) : nextTwo.length > 0 ? (
+          <div className="muell-groups">
+            {nextTwo.map((g, gi) => (
+              <div key={g.date} className={`muell-grp${gi === 0 ? ' muell-grp-next' : ''}`}>
+                <div className="muell-next-when">
+                  {fmtDate(g.date)}
+                  {relative(g.date) && <span className="muell-rel"> · {relative(g.date)}</span>}
+                </div>
+                <div className="muell-types">
+                  {g.types.map((t, i) => {
+                    const f = fractionClass(t);
+                    return (
+                      <span key={i} className={`frac frac-${f.cls}`}>
+                        {f.emoji} {t}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <p className="muted">Keine Termine gefunden.</p>
