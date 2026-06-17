@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { getWeather, getWarnings } from '@/lib/sources/weather';
 import { getRuhrLevel } from '@/lib/sources/pegel';
 import { getAirQuality } from '@/lib/sources/air';
-import { wasteInfo } from '@/lib/sources/waste';
 import { getSchoolHolidays } from '@/lib/sources/schools';
 import { listUpcomingMeetings, fetchMeetingAgenda } from '@/sessionnet';
 
@@ -96,7 +95,13 @@ export async function WeatherCard() {
 
 export async function AirCard() {
   const a = await getAirQuality();
-  if (!a) return null; // best-effort: hide when no value is ready
+  if (!a) {
+    return (
+      <Card title="Luftqualität" sub="Station Herdecke">
+        <p className="muted">Zurzeit nicht verfügbar.</p>
+      </Card>
+    );
+  }
   return (
     <Card title="Luftqualität" sub={`Station Herdecke · ${hm(a.when)}`}>
       <div className="metric">
@@ -129,20 +134,16 @@ export async function PegelCard() {
   );
 }
 
-export function AbfallCard() {
-  return (
-    <Card title="Müll-Wecker" sub={wasteInfo.provider} href="/muell" cta="Meine Abfuhrtermine →">
-      <p className="metric-detail" style={{ marginTop: 0 }}>
-        Die nächsten Abfuhrtermine für deine Straße — Restabfall, Bio, Papier und Gelber Sack.
-      </p>
-    </Card>
-  );
-}
-
 export async function SchulferienCard() {
   const holidays = await getSchoolHolidays();
   const next = holidays[0];
-  if (!next) return null;
+  if (!next) {
+    return (
+      <Card title="Schulferien NRW" href="/schulen" cta="Schulen & Ferien →">
+        <p className="muted">Zurzeit nicht verfügbar.</p>
+      </Card>
+    );
+  }
   const today = new Date().toISOString().slice(0, 10);
   const ongoing = next.start <= today;
   let note = '';

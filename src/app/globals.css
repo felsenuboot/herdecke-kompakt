@@ -87,6 +87,14 @@ a { color: var(--accent); }
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 14px;
 }
+.dashboard-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; color: var(--muted); }
+.linklike { background: none; border: 0; color: var(--accent); cursor: pointer; font-size: 13px; padding: 0; }
+.overview-item { display: flex; cursor: grab; }
+.overview-item > * { width: 100%; }
+.overview-item:active { cursor: grabbing; }
+.overview-item.dragging { opacity: 0.45; }
+.overview-item.dragover { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 14px; }
+.muell-next-when { font-weight: 600; margin-bottom: 8px; }
 .data-card {
   background: var(--card);
   border: 1px solid var(--line);

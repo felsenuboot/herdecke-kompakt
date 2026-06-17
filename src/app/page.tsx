@@ -5,12 +5,13 @@ import {
   WeatherCard,
   AirCard,
   PegelCard,
-  AbfallCard,
   SchulferienCard,
   NextMeetingCard,
   CardSkeleton,
 } from './components/cards';
 import { DeparturesCard } from './components/DeparturesCard';
+import { AbfallCard } from './components/AbfallCard';
+import { DashboardGrid } from './components/DashboardGrid';
 import { config } from '@/lib/config';
 
 // Render per request so the cards reflect current data; each source fetch is
@@ -32,25 +33,17 @@ export default function Home() {
       </Suspense>
 
       <section className="section">
-        <div className="overview">
-          <Suspense fallback={<CardSkeleton title="Wetter" />}>
-            <WeatherCard />
-          </Suspense>
-          <DeparturesCard />
-          <Suspense fallback={<CardSkeleton title="Ruhr-Pegel" />}>
-            <PegelCard />
-          </Suspense>
-          <Suspense fallback={null}>
-            <AirCard />
-          </Suspense>
-          <AbfallCard />
-          <Suspense fallback={null}>
-            <SchulferienCard />
-          </Suspense>
-          <Suspense fallback={<CardSkeleton title="Nächste Ratssitzung" />}>
-            <NextMeetingCard />
-          </Suspense>
-        </div>
+        <DashboardGrid
+          items={[
+            { id: 'wetter', node: <Suspense fallback={<CardSkeleton title="Wetter" />}><WeatherCard /></Suspense> },
+            { id: 'abfahrten', node: <DeparturesCard /> },
+            { id: 'muell', node: <AbfallCard /> },
+            { id: 'pegel', node: <Suspense fallback={<CardSkeleton title="Ruhr-Pegel" />}><PegelCard /></Suspense> },
+            { id: 'luft', node: <Suspense fallback={<CardSkeleton title="Luftqualität" />}><AirCard /></Suspense> },
+            { id: 'schulferien', node: <Suspense fallback={<CardSkeleton title="Schulferien NRW" />}><SchulferienCard /></Suspense> },
+            { id: 'rat', node: <Suspense fallback={<CardSkeleton title="Nächste Ratssitzung" />}><NextMeetingCard /></Suspense> },
+          ]}
+        />
       </section>
 
       <section className="section">
