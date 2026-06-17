@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useT } from './i18n';
 
 interface Pickup {
   type: string;
@@ -42,6 +43,7 @@ function relative(iso: string): string {
 }
 
 export function MuellForm() {
+  const { t } = useT();
   const [strasse, setStrasse] = useState('');
   const [hnr, setHnr] = useState('');
   const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
@@ -160,7 +162,7 @@ export function MuellForm() {
       <form className="muell-form" onSubmit={onSubmit}>
         <div className="muell-fields">
           <div style={{ flex: 3 }}>
-            <label htmlFor="strasse">Straße in Herdecke</label>
+            <label htmlFor="strasse">{t('Straße in Herdecke')}</label>
             <input
               id="strasse"
               type="text"
@@ -171,13 +173,13 @@ export function MuellForm() {
             />
           </div>
           <div style={{ flex: 1 }}>
-            <label htmlFor="hnr">Nr.</label>
+            <label htmlFor="hnr">{t('Nr.')}</label>
             <input id="hnr" type="text" placeholder="12" value={hnr} onChange={(e) => setHnr(e.target.value)} />
           </div>
         </div>
         <div className="muell-actions">
           <button className="btn" type="submit" disabled={state === 'loading'}>
-            {state === 'loading' ? 'Suche…' : 'Abfuhrtermine anzeigen'}
+            {state === 'loading' ? t('Suche…') : t('Abfuhrtermine anzeigen')}
           </button>
           <button
             className="btn btn-secondary"
@@ -185,7 +187,7 @@ export function MuellForm() {
             onClick={useMyLocation}
             disabled={geoState === 'locating'}
           >
-            {geoState === 'locating' ? 'Standort…' : '📍 Meinen Standort verwenden'}
+            {geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
           </button>
         </div>
         {geoMsg && (
@@ -203,7 +205,7 @@ export function MuellForm() {
 
       {result?.suggestions && result.suggestions.length > 0 && (
         <div style={{ marginTop: 12 }}>
-          <p className="hint">Meintest du:</p>
+          <p className="hint">{t('Meintest du:')}</p>
           <div className="suggestions">
             {result.suggestions.map((s) => (
               <button

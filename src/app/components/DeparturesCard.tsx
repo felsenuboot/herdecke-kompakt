@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useT } from './i18n';
 
 interface Departure {
   line: string;
@@ -24,6 +25,7 @@ function hm(iso: string): string {
 
 /** Homepage departures card — honours the user's saved default stop. */
 export function DeparturesCard() {
+  const { t } = useT();
   const [stop, setStop] = useState(DEFAULT);
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,7 +61,7 @@ export function DeparturesCard() {
   return (
     <div className="data-card">
       <div className="data-card-head">
-        <h3>Nächste Abfahrten</h3>
+        <h3>{t('Nächste Abfahrten')}</h3>
         <span className="data-card-sub">{stopName}</span>
       </div>
       <div className="data-card-body">
@@ -79,11 +81,11 @@ export function DeparturesCard() {
             ))}
           </ul>
         ) : (
-          <p className="muted">Zurzeit keine Abfahrten.</p>
+          <p className="muted">{t('Zurzeit keine Abfahrten.')}</p>
         )}
       </div>
       <div className="data-card-foot">
-        <Link href="/abfahrten">Haltestelle wählen →</Link>
+        <Link href="/abfahrten">{t('Haltestelle wählen →')}</Link>
       </div>
     </div>
   );

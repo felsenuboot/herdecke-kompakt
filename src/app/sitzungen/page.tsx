@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { listUpcomingMeetings, type Meeting } from '@/sessionnet';
+import { getT } from '@/lib/i18n-server';
 
 export const revalidate = 1800;
 export const metadata = { title: 'Sitzungen — Digital.Herdecke' };
@@ -10,6 +11,7 @@ function formatDate(iso: string): string {
 }
 
 export default async function SitzungenPage() {
+  const { t } = await getT();
   let meetings: Meeting[] = [];
   let error: string | null = null;
   try {
@@ -21,15 +23,17 @@ export default async function SitzungenPage() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
-        <h1 style={{ fontSize: 26 }}>Kommende Ratssitzungen</h1>
-        <p className="lead">Rat, Ausschüsse und Gremien der Stadt Herdecke. Tagesordnungen erscheinen meist wenige Tage vor der Sitzung.</p>
+        <h1 style={{ fontSize: 26 }}>{t('Kommende Ratssitzungen')}</h1>
+        <p className="lead">
+          {t('Rat, Ausschüsse und Gremien der Stadt Herdecke. Tagesordnungen erscheinen meist wenige Tage vor der Sitzung.')}
+        </p>
       </section>
 
       <section className="section">
         {error ? (
           <p className="status err">Sitzungen konnten gerade nicht geladen werden ({error}).</p>
         ) : meetings.length === 0 ? (
-          <p className="hint">Zurzeit sind keine kommenden Sitzungen angekündigt.</p>
+          <p className="hint">{t('Zurzeit sind keine kommenden Sitzungen angekündigt.')}</p>
         ) : (
           <ul className="meeting-list">
             {meetings.map((m) => (
@@ -43,7 +47,7 @@ export default async function SitzungenPage() {
           </ul>
         )}
         <p className="hint" style={{ marginTop: 12 }}>
-          Quelle:{' '}
+          {t('Quelle:')}{' '}
           <a href="https://sessionnet.owl-it.de/herdecke/bi/" target="_blank" rel="noreferrer">
             Ratsinformationssystem der Stadt Herdecke
           </a>

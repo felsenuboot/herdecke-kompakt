@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useT } from './i18n';
 
 export function ShareButton() {
+  const { t } = useT();
   const [copied, setCopied] = useState(false);
 
   async function share() {
@@ -27,7 +29,7 @@ export function ShareButton() {
 
   return (
     <button type="button" className="linklike" onClick={share}>
-      {copied ? 'Link kopiert ✓' : 'Teilen'}
+      {copied ? t('Link kopiert ✓') : t('Teilen')}
     </button>
   );
 }

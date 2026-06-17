@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useT } from './i18n';
 
 export interface DashboardItem {
   id: string;
@@ -14,6 +15,7 @@ const STORAGE_KEY = 'dashboard-order';
  * works with mouse, touch (iPad) and pen alike; order persisted per browser.
  */
 export function DashboardGrid({ items }: { items: DashboardItem[] }) {
+  const { t } = useT();
   const defaultOrder = items.map((i) => i.id);
   const [order, setOrder] = useState<string[]>(defaultOrder);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -93,10 +95,10 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
   return (
     <>
       <div className="dashboard-toolbar">
-        <span>⠿ Kacheln am Griff anordnen</span>
+        <span>{t('⠿ Kacheln am Griff anordnen')}</span>
         {customised && (
           <button type="button" className="linklike" onClick={reset}>
-            Zurücksetzen
+            {t('Zurücksetzen')}
           </button>
         )}
       </div>
@@ -107,7 +109,7 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
             <button
               type="button"
               className="tile-grip"
-              aria-label="Kachel verschieben"
+              aria-label={t('Kachel verschieben')}
               onPointerDown={(e) => onPointerDown(e, id)}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}

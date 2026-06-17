@@ -13,18 +13,20 @@ import { DeparturesCard } from './components/DeparturesCard';
 import { AbfallCard } from './components/AbfallCard';
 import { DashboardGrid } from './components/DashboardGrid';
 import { config } from '@/lib/config';
+import { getT } from '@/lib/i18n-server';
 
 // Render per request so the cards reflect current data; each source fetch is
 // still cached briefly (see the source clients) to stay polite to the upstreams.
 export const dynamic = 'force-dynamic';
 
-export default function Home() {
+export default async function Home() {
+  const { t } = await getT();
   return (
     <>
       <section className="hero">
         <h1>Herdecke</h1>
         <p className="lead">
-          Wetter, Verkehr, Ruhr-Pegel, Müllabfuhr und der Stadtrat — das Wichtigste aus Herdecke auf einen Blick.
+          {t('Wetter, Verkehr, Ruhr-Pegel, Müllabfuhr und der Stadtrat — das Wichtigste aus Herdecke auf einen Blick.')}
         </p>
       </section>
 
@@ -35,30 +37,31 @@ export default function Home() {
       <section className="section">
         <DashboardGrid
           items={[
-            { id: 'wetter', node: <Suspense fallback={<CardSkeleton title="Wetter" />}><WeatherCard /></Suspense> },
+            { id: 'wetter', node: <Suspense fallback={<CardSkeleton title={t('Wetter')} />}><WeatherCard /></Suspense> },
             { id: 'abfahrten', node: <DeparturesCard /> },
             { id: 'muell', node: <AbfallCard /> },
-            { id: 'pegel', node: <Suspense fallback={<CardSkeleton title="Ruhr-Pegel" />}><PegelCard /></Suspense> },
-            { id: 'luft', node: <Suspense fallback={<CardSkeleton title="Luftqualität" />}><AirCard /></Suspense> },
-            { id: 'schulferien', node: <Suspense fallback={<CardSkeleton title="Schulferien NRW" />}><SchulferienCard /></Suspense> },
-            { id: 'rat', node: <Suspense fallback={<CardSkeleton title="Nächste Ratssitzung" />}><NextMeetingCard /></Suspense> },
+            { id: 'pegel', node: <Suspense fallback={<CardSkeleton title={t('Ruhr-Pegel')} />}><PegelCard /></Suspense> },
+            { id: 'luft', node: <Suspense fallback={<CardSkeleton title={t('Luftqualität')} />}><AirCard /></Suspense> },
+            { id: 'schulferien', node: <Suspense fallback={<CardSkeleton title={t('Schulferien NRW')} />}><SchulferienCard /></Suspense> },
+            { id: 'rat', node: <Suspense fallback={<CardSkeleton title={t('Nächste Ratssitzung')} />}><NextMeetingCard /></Suspense> },
           ]}
         />
       </section>
 
       <section className="section">
         <div className="card">
-          <h2>Stichwort-Alarm für den Stadtrat</h2>
+          <h2>{t('Stichwort-Alarm für den Stadtrat')}</h2>
           <p className="lead" style={{ fontSize: 15 }}>
-            Lass dich per E-Mail benachrichtigen, sobald deine Themen — eine Straße, „Radweg", „Kita", der
-            Hengsteysee — auf einer Tagesordnung des Herdecker Rats erscheinen.
+            {t(
+              'Lass dich per E-Mail benachrichtigen, sobald deine Themen — eine Straße, „Radweg", „Kita", der Hengsteysee — auf einer Tagesordnung des Herdecker Rats erscheinen.',
+            )}
           </p>
           {config.subscriptionsEnabled ? (
             <SubscribeForm />
           ) : (
             <p className="hint">
-              E-Mail-Benachrichtigungen werden bald freigeschaltet. Bis dahin findest du die Tagesordnungen unter{' '}
-              <a href="/sitzungen">Sitzungen</a>.
+              {t('E-Mail-Benachrichtigungen werden bald freigeschaltet. Bis dahin findest du die Tagesordnungen unter')}{' '}
+              <a href="/sitzungen">{t('Sitzungen')}</a>.
             </p>
           )}
         </div>

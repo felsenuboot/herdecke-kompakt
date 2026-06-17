@@ -5,6 +5,7 @@ import { getRuhrLevel } from '@/lib/sources/pegel';
 import { getAirQuality } from '@/lib/sources/air';
 import { getSchoolHolidays } from '@/lib/sources/schools';
 import { listUpcomingMeetings, fetchMeetingAgenda } from '@/sessionnet';
+import { getT } from '@/lib/i18n-server';
 
 function hm(iso: string): string {
   return new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' });
@@ -73,9 +74,10 @@ export async function WarningsBanner() {
 }
 
 export async function WeatherCard() {
+  const { t } = await getT();
   const w = await getWeather();
   return (
-    <Card title="Wetter" sub={w ? `Stand ${hm(w.when)}` : undefined}>
+    <Card title={t('Wetter')} sub={w ? `Stand ${hm(w.when)}` : undefined}>
       {w ? (
         <>
           <div className="metric">
@@ -87,37 +89,39 @@ export async function WeatherCard() {
           </p>
         </>
       ) : (
-        <p className="muted">Zurzeit nicht verfügbar.</p>
+        <p className="muted">{t('Zurzeit nicht verfügbar.')}</p>
       )}
     </Card>
   );
 }
 
 export async function AirCard() {
+  const { t } = await getT();
   const a = await getAirQuality();
   if (!a) {
     return (
-      <Card title="Luftqualität" sub="Station Herdecke">
-        <p className="muted">Zurzeit nicht verfügbar.</p>
+      <Card title={t('Luftqualität')} sub={t('Station Herdecke')}>
+        <p className="muted">{t('Zurzeit nicht verfügbar.')}</p>
       </Card>
     );
   }
   return (
-    <Card title="Luftqualität" sub={`Station Herdecke · ${hm(a.when)}`}>
+    <Card title={t('Luftqualität')} sub={`${t('Station Herdecke')} · ${hm(a.when)}`}>
       <div className="metric">
         <span className={`aqi aqi-${a.index}`} />
         <span className="metric-value-sm">{a.label}</span>
       </div>
-      <p className="metric-detail">Luftqualitätsindex (Umweltbundesamt)</p>
+      <p className="metric-detail">{t('Luftqualitätsindex (Umweltbundesamt)')}</p>
     </Card>
   );
 }
 
 export async function PegelCard() {
+  const { t } = await getT();
   const p = await getRuhrLevel();
   const arrow = p?.trend === 'rising' ? '↑' : p?.trend === 'falling' ? '↓' : p?.trend === 'steady' ? '→' : '';
   return (
-    <Card title="Ruhr-Pegel" sub={p ? `Hattingen · ${hm(p.when)}` : undefined} href="https://www.pegelonline.wsv.de/gast/stammdaten?pegelnr=2790010" cta="Mehr beim WSV →">
+    <Card title={t('Ruhr-Pegel')} sub={p ? `Hattingen · ${hm(p.when)}` : undefined} href="https://www.pegelonline.wsv.de/gast/stammdaten?pegelnr=2790010" cta={t('Mehr beim WSV →')}>
       {p ? (
         <>
           <div className="metric">
@@ -125,22 +129,23 @@ export async function PegelCard() {
               {p.cm} cm {arrow}
             </span>
           </div>
-          <p className="metric-detail">Wasserstand Ruhr, ~{p.km} km flussabwärts von Herdecke</p>
+          <p className="metric-detail">{t('Wasserstand der Ruhr (Pegel Hattingen)')}</p>
         </>
       ) : (
-        <p className="muted">Zurzeit nicht verfügbar.</p>
+        <p className="muted">{t('Zurzeit nicht verfügbar.')}</p>
       )}
     </Card>
   );
 }
 
 export async function SchulferienCard() {
+  const { t } = await getT();
   const holidays = await getSchoolHolidays();
   const next = holidays[0];
   if (!next) {
     return (
-      <Card title="Schulferien NRW" href="/schulen" cta="Schulen & Ferien →">
-        <p className="muted">Zurzeit nicht verfügbar.</p>
+      <Card title={t('Schulferien NRW')} href="/schulen" cta={`${t('Schulen & Ferien')} →`}>
+        <p className="muted">{t('Zurzeit nicht verfügbar.')}</p>
       </Card>
     );
   }
@@ -155,7 +160,7 @@ export async function SchulferienCard() {
     note = days === 1 ? ' · ab morgen' : ` · in ${days} Tagen`;
   }
   return (
-    <Card title="Schulferien NRW" sub={ongoing ? 'aktuell' : 'nächste'} href="/schulen" cta="Schulen & Ferien →">
+    <Card title={t('Schulferien NRW')} sub={ongoing ? 'aktuell' : 'nächste'} href="/schulen" cta={`${t('Schulen & Ferien')} →`}>
       <div className="metric">
         <span className="metric-value-sm">{next.name}</span>
       </div>
@@ -168,6 +173,7 @@ export async function SchulferienCard() {
 }
 
 export async function NextMeetingCard() {
+  const { t } = await getT();
   let next;
   try {
     next = (await listUpcomingMeetings({ months: 4 }))[0];
@@ -176,15 +182,15 @@ export async function NextMeetingCard() {
   }
   if (!next) {
     return (
-      <Card title="Nächste Ratssitzung" href="/sitzungen" cta="Alle Sitzungen →">
-        <p className="muted">Zurzeit keine Sitzung angekündigt.</p>
+      <Card title={t('Nächste Ratssitzung')} href="/sitzungen" cta={t('Alle Sitzungen →')}>
+        <p className="muted">{t('Zurzeit keine Sitzung angekündigt.')}</p>
       </Card>
     );
   }
   const agenda = await fetchMeetingAgenda(next).catch(() => null);
   const items = (agenda?.items ?? []).filter((i) => i.subject).slice(0, 4);
   return (
-    <Card title="Nächste Ratssitzung" sub={`${next.committee} · ${dmy(next.date)}`} href={`/meetings/${next.ksinr}`} cta="Ganze Tagesordnung →">
+    <Card title={t('Nächste Ratssitzung')} sub={`${next.committee} · ${dmy(next.date)}`} href={`/meetings/${next.ksinr}`} cta={t('Ganze Tagesordnung →')}>
       {items.length > 0 ? (
         <ul className="mini-agenda">
           {items.map((it, i) => (
@@ -192,7 +198,7 @@ export async function NextMeetingCard() {
           ))}
         </ul>
       ) : (
-        <p className="muted">Tagesordnung noch nicht veröffentlicht.</p>
+        <p className="muted">{t('Tagesordnung noch nicht veröffentlicht.')}</p>
       )}
     </Card>
   );

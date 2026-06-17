@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useT } from './i18n';
 
 interface Pickup {
   type: string;
@@ -21,21 +22,20 @@ function fractionClass(type: string): { cls: string; emoji: string } {
   if (t.includes('gelb') || t.includes('wertstoff') || t.includes('verpack')) return { cls: 'gelb', emoji: '🟡' };
   return { cls: 'other', emoji: '♻️' };
 }
-function fmtDate(iso: string): string {
-  return new Date(`${iso}T00:00:00`).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+function fmtDate(iso: string, bcp47: string): string {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString(bcp47, { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
-function relative(iso: string): string {
+function relative(iso: string, bcp47: string): string {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const days = Math.round((new Date(`${iso}T00:00:00`).getTime() - today.getTime()) / 86_400_000);
-  if (days <= 0) return 'heute';
-  if (days === 1) return 'morgen';
-  if (days < 7) return `in ${days} Tagen`;
-  return '';
+  if (days > 7) return '';
+  return new Intl.RelativeTimeFormat(bcp47, { numeric: 'auto' }).format(days, 'day');
 }
 
 /** Homepage waste card — shows the next collection for the saved address. */
 export function AbfallCard() {
+  const { t, bcp47 } = useT();
   const [addr, setAddr] = useState<{ strasse: string; hnr: string } | null>(null);
   const [result, setResult] = useState<WasteResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,7 +80,7 @@ export function AbfallCard() {
   return (
     <div className="data-card">
       <div className="data-card-head">
-        <h3>Müll-Wecker</h3>
+        <h3>{t('Müll-Wecker')}</h3>
         {addr && <span className="data-card-sub">{result?.street ?? addr.strasse}</span>}
       </div>
       <div className="data-card-body">
@@ -88,22 +88,22 @@ export function AbfallCard() {
           <div className="skeleton" />
         ) : !addr ? (
           <p className="metric-detail" style={{ marginTop: 0 }}>
-            Trage deine Straße ein, um hier die nächste Abfuhr zu sehen.
+            {t('Trage deine Straße ein, um hier die nächste Abfuhr zu sehen.')}
           </p>
         ) : nextTwo.length > 0 ? (
           <div className="muell-groups">
             {nextTwo.map((g, gi) => (
               <div key={g.date} className={`muell-grp${gi === 0 ? ' muell-grp-next' : ''}`}>
                 <div className="muell-next-when">
-                  {fmtDate(g.date)}
-                  {relative(g.date) && <span className="muell-rel"> · {relative(g.date)}</span>}
+                  {fmtDate(g.date, bcp47)}
+                  {relative(g.date, bcp47) && <span className="muell-rel"> · {relative(g.date, bcp47)}</span>}
                 </div>
                 <div className="muell-types">
-                  {g.types.map((t, i) => {
-                    const f = fractionClass(t);
+                  {g.types.map((type, i) => {
+                    const f = fractionClass(type);
                     return (
                       <span key={i} className={`frac frac-${f.cls}`}>
-                        {f.emoji} {t}
+                        {f.emoji} {t(type)}
                       </span>
                     );
                   })}
@@ -112,11 +112,11 @@ export function AbfallCard() {
             ))}
           </div>
         ) : (
-          <p className="muted">Keine Termine gefunden.</p>
+          <p className="muted">{t('Keine Termine gefunden.')}</p>
         )}
       </div>
       <div className="data-card-foot">
-        <Link href="/muell">{addr ? 'Alle Termine →' : 'Adresse eintragen →'}</Link>
+        <Link href="/muell">{addr ? t('Alle Termine →') : t('Adresse eintragen →')}</Link>
       </div>
     </div>
   );

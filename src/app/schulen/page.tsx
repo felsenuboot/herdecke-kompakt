@@ -1,4 +1,5 @@
 import { getHerdeckeSchools, getSchoolHolidays, type School } from '@/lib/sources/schools';
+import { getT } from '@/lib/i18n-server';
 
 export const revalidate = 86400;
 export const metadata = { title: 'Schulen & Ferien — Digital.Herdecke' };
@@ -9,6 +10,7 @@ function dmy(iso: string): string {
 }
 
 export default async function SchulenPage() {
+  const { t } = await getT();
   const [schools, holidays] = await Promise.all([getHerdeckeSchools(), getSchoolHolidays()]);
 
   const groups: { label: string; items: School[] }[] = [];
@@ -24,12 +26,12 @@ export default async function SchulenPage() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
-        <h1 style={{ fontSize: 26 }}>Schulen & Ferien</h1>
-        <p className="lead">Alle Schulen in Herdecke und die kommenden Schulferien in Nordrhein-Westfalen.</p>
+        <h1 style={{ fontSize: 26 }}>{t('Schulen & Ferien')}</h1>
+        <p className="lead">{t('Alle Schulen in Herdecke und die kommenden Schulferien in Nordrhein-Westfalen.')}</p>
       </section>
 
       <section className="section">
-        <h2>Nächste Schulferien (NRW)</h2>
+        <h2>{t('Nächste Schulferien (NRW)')}</h2>
         {holidays.length === 0 ? (
           <p className="hint">Ferientermine zurzeit nicht verfügbar.</p>
         ) : (
@@ -47,7 +49,7 @@ export default async function SchulenPage() {
       </section>
 
       <section className="section">
-        <h2>Schulen in Herdecke {schools.length > 0 && <span className="hint">({schools.length})</span>}</h2>
+        <h2>{t('Schulen in Herdecke')} {schools.length > 0 && <span className="hint">({schools.length})</span>}</h2>
         {groups.length === 0 ? (
           <p className="hint">Schuldaten zurzeit nicht verfügbar.</p>
         ) : (

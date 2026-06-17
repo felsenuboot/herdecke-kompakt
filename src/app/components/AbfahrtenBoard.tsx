@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useT } from './i18n';
 
 interface Stop {
   id: string;
@@ -26,6 +27,7 @@ function hm(iso: string): string {
 }
 
 export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
+  const { t } = useT();
   const [stopId, setStopId] = useState(stops[0]?.id ?? 'de:05954:2269');
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +73,7 @@ export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
     <div>
       <div className="muell-fields" style={{ maxWidth: 480 }}>
         <div style={{ flex: 1 }}>
-          <label htmlFor="stop">Haltestelle in Herdecke</label>
+          <label htmlFor="stop">{t('Haltestelle in Herdecke')}</label>
           <select id="stop" className="stop-select" value={stopId} onChange={(e) => setStopId(e.target.value)}>
             {stops.map((s) => (
               <option key={s.id} value={s.id}>
@@ -82,7 +84,7 @@ export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
         </div>
       </div>
       <button type="button" className="btn" style={{ marginTop: 10 }} onClick={saveDefault}>
-        {saved ? '✓ Als Standard gespeichert' : 'Als Standard für die Startseite'}
+        {saved ? t('✓ Als Standard gespeichert') : t('Als Standard für die Startseite')}
       </button>
 
       <div style={{ marginTop: 18 }}>

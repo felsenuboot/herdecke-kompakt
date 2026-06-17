@@ -1,16 +1,19 @@
 import { MuellForm } from '../components/MuellForm';
 import { wasteInfo } from '@/lib/sources/waste';
+import { getT } from '@/lib/i18n-server';
 
 export const metadata = { title: 'Müll-Wecker — Digital.Herdecke' };
 
-export default function MuellPage() {
+export default async function MuellPage() {
+  const { t } = await getT();
   return (
     <>
       <section className="hero" style={{ paddingBottom: 8 }}>
-        <h1 style={{ fontSize: 26 }}>Müll-Wecker</h1>
+        <h1 style={{ fontSize: 26 }}>{t('Müll-Wecker')}</h1>
         <p className="lead">
-          Wann wird in deiner Straße abgeholt? Gib deine Adresse ein und sieh die nächsten Termine für Restabfall,
-          Bioabfall, Papier und Gelben Sack.
+          {t(
+            'Wann wird in deiner Straße abgeholt? Gib deine Adresse ein und sieh die nächsten Termine für Restabfall, Bioabfall, Papier und Gelben Sack.',
+          )}
         </p>
       </section>
 
