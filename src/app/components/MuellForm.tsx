@@ -197,7 +197,8 @@ export function MuellForm() {
         </>
       )}
 
-      {days.length > 0 && (
+      {days.length > 0 &&
+        (process.env.NEXT_PUBLIC_SUBSCRIPTIONS_ENABLED === 'true' ? (
         <form className="muell-reminder" onSubmit={subscribeReminder}>
           <p className="muell-reminder-title">📧 Erinnerung am Vorabend</p>
           <p className="hint" style={{ marginTop: 0 }}>
@@ -232,7 +233,11 @@ export function MuellForm() {
             Double-Opt-In, jederzeit mit einem Klick abbestellbar. Siehe <a href="/datenschutz">Datenschutz</a>.
           </p>
         </form>
-      )}
+        ) : (
+          <p className="hint" style={{ marginTop: 18 }}>
+            📧 E-Mail-Erinnerungen am Vorabend folgen bald.
+          </p>
+        ))}
     </div>
   );
 }

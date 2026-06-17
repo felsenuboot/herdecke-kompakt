@@ -11,6 +11,7 @@ import {
   CardSkeleton,
 } from './components/cards';
 import { DeparturesCard } from './components/DeparturesCard';
+import { config } from '@/lib/config';
 
 // Render per request so the cards reflect current data; each source fetch is
 // still cached briefly (see the source clients) to stay polite to the upstreams.
@@ -59,7 +60,14 @@ export default function Home() {
             Lass dich per E-Mail benachrichtigen, sobald deine Themen — eine Straße, „Radweg", „Kita", der
             Hengsteysee — auf einer Tagesordnung des Herdecker Rats erscheinen.
           </p>
-          <SubscribeForm />
+          {config.subscriptionsEnabled ? (
+            <SubscribeForm />
+          ) : (
+            <p className="hint">
+              E-Mail-Benachrichtigungen werden bald freigeschaltet. Bis dahin findest du die Tagesordnungen unter{' '}
+              <a href="/sitzungen">Sitzungen</a>.
+            </p>
+          )}
         </div>
       </section>
     </>

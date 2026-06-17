@@ -28,6 +28,9 @@ function parseKeywords(raw: string): string[] {
 }
 
 export async function POST(req: Request) {
+  if (!config.subscriptionsEnabled) {
+    return NextResponse.json({ error: 'E-Mail-Benachrichtigungen sind derzeit deaktiviert.' }, { status: 503 });
+  }
   let json: unknown;
   try {
     json = await req.json();

@@ -4,6 +4,7 @@ import { getStore } from '@/lib/store';
 import { sendEmail } from '@/lib/email';
 import { renderWasteConfirmEmail } from '@/lib/render-email';
 import { getWastePickups } from '@/lib/sources/waste-ahe';
+import { config } from '@/lib/config';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +15,9 @@ const Body = z.object({
 });
 
 export async function POST(req: Request) {
+  if (!config.subscriptionsEnabled) {
+    return NextResponse.json({ error: 'E-Mail-Benachrichtigungen sind derzeit deaktiviert.' }, { status: 503 });
+  }
   let json: unknown;
   try {
     json = await req.json();
