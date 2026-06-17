@@ -14,6 +14,7 @@ import { AbfallCard } from './components/AbfallCard';
 import { DashboardGrid } from './components/DashboardGrid';
 import { config } from '@/lib/config';
 import { getT } from '@/lib/i18n-server';
+import { FlagStack } from './components/FlagStack';
 
 // Render per request so the cards reflect current data; each source fetch is
 // still cached briefly (see the source clients) to stay polite to the upstreams.
@@ -24,6 +25,7 @@ export default async function Home() {
   return (
     <>
       <section className="hero">
+        <FlagStack />
         <h1>Herdecke</h1>
         <p className="lead">
           {t('Wetter, Verkehr, Ruhr-Pegel, Müllabfuhr und der Stadtrat — das Wichtigste aus Herdecke auf einen Blick.')}

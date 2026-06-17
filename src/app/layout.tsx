@@ -2,8 +2,25 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
 import { ShareButton } from './components/ShareButton';
-import { I18nProvider, LocaleSwitcher } from './components/i18n';
+import { I18nProvider } from './components/i18n';
+import { SiteNav } from './components/SiteNav';
 import { getT } from '@/lib/i18n-server';
+
+const THEME_SCRIPT = `(function () {
+  try {
+    var stored = null;
+    try { stored = localStorage.getItem('theme'); } catch (e) {}
+    var theme;
+    if (stored === 'dark' || stored === 'light') {
+      theme = stored;
+    } else {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.dataset.theme = theme;
+  } catch (e) {
+    document.documentElement.dataset.theme = 'light';
+  }
+})();`;
 
 export const metadata: Metadata = {
   title: 'Digital.Herdecke — Wetter, Verkehr, Ruhr-Pegel & Stadtrat',
@@ -14,24 +31,23 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { locale, t } = await getT();
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <I18nProvider locale={locale}>
           <header className="site-header">
             <div className="container">
-              <Link href="/" className="brand">
-                Herdecke.Digital
+              <Link href="/" className="brand" aria-label={t('Herdecke — Startseite')}>
+                <span className="brand-mark" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>
+                  Herdecke<span className="brand-dot">.Digital</span>
+                </span>
               </Link>
-              <nav>
-                <Link href="/">{t('Start')}</Link>
-                <Link href="/abfahrten">{t('Abfahrten')}</Link>
-                <Link href="/muell">{t('Müll')}</Link>
-                <Link href="/schulen">{t('Schulen')}</Link>
-                <Link href="/sitzungen">{t('Sitzungen')}</Link>
-                <Link href="/datenschutz">{t('Datenschutz')}</Link>
-                <Link href="/impressum">{t('Impressum')}</Link>
-                <LocaleSwitcher />
-              </nav>
+              <SiteNav />
             </div>
           </header>
           <main className="container">{children}</main>
