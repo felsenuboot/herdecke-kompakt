@@ -1,5 +1,5 @@
 /** Tiny JSON fetch helper for the open-data source clients: timeout + caching. */
-const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-kompakt)';
+const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
 
 export async function fetchJson<T = unknown>(url: string, revalidateSeconds = 300, timeoutMs = 10000): Promise<T> {
   const res = await fetch(url, {

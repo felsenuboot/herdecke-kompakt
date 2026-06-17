@@ -14,7 +14,7 @@
  */
 const BASE = 'https://ahe.atino.net';
 const PLZ = '58313';
-const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-kompakt)';
+const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
 
 export interface Pickup {
   /** Waste type, e.g. "Restabfall", "Bioabfall", "Papier", "Gelber Sack". */

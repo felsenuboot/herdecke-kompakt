@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <span>{t('Ein unabhängiges Bürger-Projekt. Keine offizielle Seite der Stadt Herdecke.')}</span>
               <Link href="/datenschutz">{t('Datenschutz')}</Link>
               <Link href="/impressum">{t('Impressum')}</Link>
-              <a href="https://github.com/felsenuboot/herdecke-kompakt" target="_blank" rel="noreferrer">
+              <a href="https://github.com/felsenuboot/herdecke-digital" target="_blank" rel="noreferrer">
                 GitHub
               </a>
               <ShareButton />

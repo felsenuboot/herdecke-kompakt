@@ -1,6 +1,6 @@
 # Digital.Herdecke
 
-[![CI](https://github.com/felsenuboot/herdecke-kompakt/actions/workflows/ci.yml/badge.svg)](https://github.com/felsenuboot/herdecke-kompakt/actions/workflows/ci.yml)
+[![CI](https://github.com/felsenuboot/herdecke-digital/actions/workflows/ci.yml/badge.svg)](https://github.com/felsenuboot/herdecke-digital/actions/workflows/ci.yml)
 
 The most useful civic data for **Stadt Herdecke** on one page — live weather &
 official DWD warnings, the next public-transport departures, the Ruhr water level,

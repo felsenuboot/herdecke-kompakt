@@ -21,7 +21,7 @@ export const BASE_URL = 'https://sessionnet.owl-it.de/herdecke/bi';
 
 /** Identify the bot honestly with a contact, as good civic-scraping etiquette. */
 const USER_AGENT =
-  'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-kompakt)';
+  'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
 
 const REQUEST_TIMEOUT_MS = 20_000;
 

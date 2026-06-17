@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 // when the user taps "use my location", so it stays well within Nominatim's
 // fair-use policy (identify with a User-Agent, ≤1 req/s). For heavy use, swap in
 // the BKG/NRW geocoder.
-const UA = 'Digital.Herdecke/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-kompakt)';
+const UA = 'Digital.Herdecke/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

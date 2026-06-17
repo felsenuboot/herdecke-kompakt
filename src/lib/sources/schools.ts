@@ -8,7 +8,7 @@
 
 const SCHULDATEN_CSV = 'https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/schuldaten.csv';
 const HERDECKE_AGS = '05954020';
-const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-kompakt)';
+const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
 
 /** Official NRW Schulform key (key_schulformschluessel.csv). */
 const SCHULFORM: Record<string, string> = {

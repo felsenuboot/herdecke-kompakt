@@ -1,11 +1,11 @@
 {
-  "name": "herdecke-kompakt",
+  "name": "herdecke-digital",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",
   "description": "Digital.Herdecke — an open civic dashboard for Herdecke (NRW): weather & DWD warnings, live VRR departures, Ruhr water level, waste calendar, schools & holidays, and city-council keyword alerts, all from public open data.",
-  "repository": { "type": "git", "url": "https://github.com/felsenuboot/herdecke-kompakt.git" },
+  "repository": { "type": "git", "url": "https://github.com/felsenuboot/herdecke-digital.git" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
