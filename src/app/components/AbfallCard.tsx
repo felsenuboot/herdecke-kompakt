@@ -33,12 +33,18 @@ function relative(iso: string, bcp47: string): string {
   return new Intl.RelativeTimeFormat(bcp47, { numeric: 'auto' }).format(days, 'day');
 }
 
-/** Homepage waste card — shows the next collection for the saved address. */
+/**
+ * Homepage waste card. Shows the next collection for the saved address; if none
+ * is saved yet, lets the user detect it with one tap ("use my location") right
+ * here — geocode → waste dates → remembered (shared with the /muell page).
+ */
 export function AbfallCard() {
   const { t, bcp47 } = useT();
   const [addr, setAddr] = useState<{ strasse: string; hnr: string } | null>(null);
   const [result, setResult] = useState<WasteResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [geoState, setGeoState] = useState<'idle' | 'locating' | 'err'>('idle');
+  const [geoMsg, setGeoMsg] = useState('');
 
   useEffect(() => {
     try {
@@ -57,9 +63,16 @@ export function AbfallCard() {
     fetch(`/api/waste?strasse=${encodeURIComponent(addr.strasse)}&hnr=${encodeURIComponent(addr.hnr)}`)
       .then((r) => r.json())
       .then((d: WasteResult) => {
-        if (active) {
-          setResult(d);
-          setLoading(false);
+        if (!active) return;
+        setResult(d);
+        setLoading(false);
+        // Remember only addresses that actually resolved to collection dates.
+        if (d.pickups?.length) {
+          try {
+            localStorage.setItem('muell-adresse', JSON.stringify(addr));
+          } catch {
+            /* ignore */
+          }
         }
       })
       .catch(() => active && setLoading(false));
@@ -67,6 +80,40 @@ export function AbfallCard() {
       active = false;
     };
   }, [addr]);
+
+  function useMyLocation() {
+    if (!('geolocation' in navigator)) {
+      setGeoState('err');
+      setGeoMsg(t('Standortbestimmung wird von deinem Browser nicht unterstützt.'));
+      return;
+    }
+    setGeoState('locating');
+    setGeoMsg('');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(`/api/geocode?lat=${latitude}&lon=${longitude}`);
+          const data = (await res.json()) as { strasse?: string; hnr?: string; error?: string };
+          if (res.ok && data.strasse) {
+            setGeoState('idle');
+            setAddr({ strasse: data.strasse, hnr: data.hnr ?? '' });
+          } else {
+            setGeoState('err');
+            setGeoMsg(data.error ?? t('Adresse konnte nicht bestimmt werden.'));
+          }
+        } catch {
+          setGeoState('err');
+          setGeoMsg(t('Adresse konnte nicht bestimmt werden.'));
+        }
+      },
+      () => {
+        setGeoState('err');
+        setGeoMsg(t('Standortzugriff wurde abgelehnt.'));
+      },
+      { enableHighAccuracy: true, timeout: 10_000 },
+    );
+  }
 
   // Group pickups by date, keep the next two collection days.
   const groups: { date: string; types: string[] }[] = [];
@@ -87,9 +134,24 @@ export function AbfallCard() {
         {loading ? (
           <div className="skeleton" />
         ) : !addr ? (
-          <p className="metric-detail" style={{ marginTop: 0 }}>
-            {t('Trage deine Straße ein, um hier die nächste Abfuhr zu sehen.')}
-          </p>
+          <div className="muell-cta">
+            <p className="metric-detail" style={{ margin: 0 }}>
+              {t('Standort bestimmen für deine nächste Abfuhr:')}
+            </p>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={useMyLocation}
+              disabled={geoState === 'locating'}
+            >
+              {geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
+            </button>
+            {geoMsg && (
+              <p className="status err" style={{ margin: 0 }}>
+                {geoMsg}
+              </p>
+            )}
+          </div>
         ) : nextTwo.length > 0 ? (
           <div className="muell-groups">
             {nextTwo.map((g, gi) => (
@@ -116,7 +178,7 @@ export function AbfallCard() {
         )}
       </div>
       <div className="data-card-foot">
-        <Link href="/muell">{addr ? t('Alle Termine →') : t('Adresse eintragen →')}</Link>
+        <Link href="/muell">{addr ? t('Alle Termine →') : t('Adresse manuell eingeben →')}</Link>
       </div>
     </div>
   );

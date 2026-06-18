@@ -40,8 +40,8 @@ export default async function Home() {
         <DashboardGrid
           items={[
             { id: 'wetter', node: <Suspense fallback={<CardSkeleton title={t('Wetter')} />}><WeatherCard /></Suspense> },
-            { id: 'abfahrten', node: <DeparturesCard /> },
             { id: 'muell', node: <AbfallCard /> },
+            { id: 'abfahrten', node: <DeparturesCard /> },
             { id: 'pegel', node: <Suspense fallback={<CardSkeleton title={t('Ruhr-Pegel')} />}><PegelCard /></Suspense> },
             { id: 'luft', node: <Suspense fallback={<CardSkeleton title={t('Luftqualität')} />}><AirCard /></Suspense> },
             { id: 'schulferien', node: <Suspense fallback={<CardSkeleton title={t('Schulferien NRW')} />}><SchulferienCard /></Suspense> },
