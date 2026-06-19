@@ -151,6 +151,10 @@ Example (real output, Rat 18.06.2026):
 10. **CI** ✅ — GitHub Actions runs typecheck + build on every push/PR.
 11. **Next** — subscribable **flood / severe-weather alerts** for Herdecke (the data
     is already wired into the dashboard); council per-committee filters & daily digest.
+12. **Council archive search** — make past council meetings, agendas and decisions
+    **full-text searchable** (the SessionNet portal offers neither search nor an
+    OParl API); index scraped agenda items so residents can look up a street, topic,
+    or past decision across previous sessions.
 
 ## Deploy
 
