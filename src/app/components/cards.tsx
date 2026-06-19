@@ -1,5 +1,9 @@
-/** Live data cards for the "Digital.Herdecke" overview. All server components. */
+/** Live data cards for the "Digital.Herdecke" overview. All server components.
+ *  KERN components (KernLink, Icon, Badge) are rendered here with serializable
+ *  props — they hydrate as client islands inside these server-rendered cards. */
 import Link from 'next/link';
+import { KernLink, Badge, Icon } from './kern';
+import { WarningsList } from './WarningsList';
 import { getWeather, getWarnings } from '@/lib/sources/weather';
 import { getRuhrLevel } from '@/lib/sources/pegel';
 import { getAirQuality } from '@/lib/sources/air';
@@ -37,7 +41,20 @@ function Card({
       <div className="data-card-body">{children}</div>
       {href && cta && (
         <div className="data-card-foot">
-          {href.startsWith('/') ? <Link href={href}>{cta}</Link> : <a href={href} target="_blank" rel="noreferrer">{cta}</a>}
+          {href.startsWith('/') ? (
+            <Link href={href} className="kern-link kern-link--small">
+              {cta.replace(/\s*→\s*$/, '')}
+              <Icon name="arrow-forward" aria-hidden={true} />
+            </Link>
+          ) : (
+            <KernLink
+              href={href}
+              variant="small"
+              title={cta.replace(/\s*→\s*$/, '')}
+              icon={{ name: 'open-in-new' }}
+              rel="noreferrer"
+            />
+          )}
         </div>
       )}
     </div>
@@ -60,22 +77,17 @@ export function CardSkeleton({ title }: { title: string }) {
 export async function WarningsBanner() {
   const warnings = await getWarnings();
   if (warnings.length === 0) return null;
-  return (
-    <div className="warn-banner">
-      {warnings.map((w, i) => (
-        <div key={i} className={`warn warn-${w.severity}`}>
-          <strong>⚠️ {w.event}</strong>
-          {w.headline && <span> — {w.headline}</span>}
-          {w.instruction && <p className="warn-instruction">{w.instruction}</p>}
-        </div>
-      ))}
-    </div>
-  );
+  // Rendering + dismissal happen client-side (localStorage only); the server
+  // only forwards the public DWD warnings — no user data leaves the browser.
+  return <WarningsList warnings={warnings} />;
 }
 
 export async function WeatherCard() {
   const { t } = await getT();
-  const w = await getWeather();
+  const [w, warnings] = await Promise.all([getWeather(), getWarnings()]);
+  // Name the distinct warning events (e.g. "Gewitter", "Windböen") instead of
+  // just counting them; colour each by its own severity.
+  const events = [...new Set(warnings.map((x) => x.event))];
   return (
     <Card title={t('Wetter')} sub={w ? `Stand ${hm(w.when)}` : undefined}>
       {w ? (
@@ -90,6 +102,20 @@ export async function WeatherCard() {
         </>
       ) : (
         <p className="muted">{t('Zurzeit nicht verfügbar.')}</p>
+      )}
+      {events.length > 0 && (
+        <div className="wx-warns">
+          {events.slice(0, 2).map((ev) => {
+            const sev = warnings.find((x) => x.event === ev)?.severity ?? '';
+            const danger = sev === 'severe' || sev === 'extreme';
+            return <Badge key={ev} variant={danger ? 'danger' : 'warning'} showIcon title={ev} />;
+          })}
+          {events.length > 2 && (
+            <span className="muted" style={{ fontSize: 12 }}>
+              +{events.length - 2}
+            </span>
+          )}
+        </div>
       )}
     </Card>
   );

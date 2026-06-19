@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useT } from './i18n';
+import { Icon } from './kern';
 
 interface Departure {
   line: string;
@@ -85,7 +86,10 @@ export function DeparturesCard() {
         )}
       </div>
       <div className="data-card-foot">
-        <Link href="/abfahrten">{t('Haltestelle wählen →')}</Link>
+        <Link href="/abfahrten" className="kern-link kern-link--small">
+          {t('Haltestelle wählen')}
+          <Icon name="arrow-forward" aria-hidden={true} />
+        </Link>
       </div>
     </div>
   );

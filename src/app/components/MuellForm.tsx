@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useT } from './i18n';
+import { TextInput, EmailInput, Button, Icon } from './kern';
 
 interface Pickup {
   type: string;
@@ -162,45 +163,57 @@ export function MuellForm() {
       <form className="muell-form" onSubmit={onSubmit}>
         <div className="muell-fields">
           <div style={{ flex: 3 }}>
-            <label htmlFor="strasse">{t('Straße in Herdecke')}</label>
-            <input
+            <TextInput
               id="strasse"
-              type="text"
-              required
+              name="strasse"
+              label={t('Straße in Herdecke')}
               placeholder="z. B. Hauptstraße"
+              required
               value={strasse}
               onChange={(e) => setStrasse(e.target.value)}
             />
           </div>
           <div style={{ flex: 1 }}>
-            <label htmlFor="hnr">{t('Nr.')}</label>
-            <input id="hnr" type="text" placeholder="12" value={hnr} onChange={(e) => setHnr(e.target.value)} />
+            <TextInput
+              id="hnr"
+              name="hnr"
+              label={t('Nr.')}
+              placeholder="12"
+              value={hnr}
+              onChange={(e) => setHnr(e.target.value)}
+            />
           </div>
         </div>
         <div className="muell-actions">
-          <button className="btn" type="submit" disabled={state === 'loading'}>
-            {state === 'loading' ? t('Suche…') : t('Abfuhrtermine anzeigen')}
-          </button>
-          <button
-            className="btn btn-secondary"
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={state === 'loading'}
+            icon={{ name: 'search' }}
+            iconLeft={true}
+            text={state === 'loading' ? t('Suche…') : t('Abfuhrtermine anzeigen')}
+          />
+          <Button
+            variant="secondary"
             type="button"
             onClick={useMyLocation}
             disabled={geoState === 'locating'}
-          >
-            {geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
-          </button>
+            text={geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
+          />
         </div>
         {geoMsg && (
-          <p className="status err" style={{ marginTop: 10 }}>
-            {geoMsg}
-          </p>
+          <div className="status err" role="alert" style={{ marginTop: 10 }}>
+            <Icon name="danger" aria-hidden={true} />
+            <span>{geoMsg}</span>
+          </div>
         )}
       </form>
 
       {result?.error && (
-        <p className="status err" style={{ marginTop: 14 }}>
-          {result.error}
-        </p>
+        <div className="status err" role="alert" style={{ marginTop: 14 }}>
+          <Icon name="danger" aria-hidden={true} />
+          <span>{result.error}</span>
+        </div>
       )}
 
       {result?.suggestions && result.suggestions.length > 0 && (
@@ -265,27 +278,35 @@ export function MuellForm() {
           </p>
           <div className="muell-fields">
             <div style={{ flex: 1 }}>
-              <label htmlFor="remEmail">E-Mail-Adresse</label>
-              <input
+              <EmailInput
                 id="remEmail"
-                type="email"
-                required
+                name="remEmail"
+                label="E-Mail-Adresse"
                 placeholder="du@example.com"
+                required
                 value={remEmail}
                 onChange={(e) => setRemEmail(e.target.value)}
               />
             </div>
           </div>
-          <button className="btn" type="submit" disabled={remState === 'sending'}>
-            {remState === 'sending' ? 'Wird gesendet…' : 'Erinnerung aktivieren'}
-          </button>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={remState === 'sending'}
+            text={remState === 'sending' ? 'Wird gesendet…' : 'Erinnerung aktivieren'}
+          />
           {remMsg && (
-            <p className={`status ${remState === 'ok' ? 'ok' : 'err'}`} style={{ marginTop: 10 }}>
-              {remMsg}
-            </p>
+            <div className={`status ${remState === 'ok' ? 'ok' : 'err'}`} role={remState === 'ok' ? 'status' : 'alert'} style={{ marginTop: 10 }}>
+              <Icon name={remState === 'ok' ? 'success' : 'danger'} aria-hidden={true} />
+              <span>{remMsg}</span>
+            </div>
           )}
           <p className="hint">
-            Double-Opt-In, jederzeit mit einem Klick abbestellbar. Siehe <a href="/datenschutz">Datenschutz</a>.
+            Double-Opt-In, jederzeit mit einem Klick abbestellbar. Siehe{' '}
+            <a className="hd-link" href="/datenschutz">
+              Datenschutz
+            </a>
+            .
           </p>
         </form>
         ) : (

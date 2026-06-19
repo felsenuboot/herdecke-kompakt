@@ -15,6 +15,7 @@ import { DashboardGrid } from './components/DashboardGrid';
 import { config } from '@/lib/config';
 import { getT } from '@/lib/i18n-server';
 import { FlagStack } from './components/FlagStack';
+import { Icon } from './components/kern';
 
 // Render per request so the cards reflect current data; each source fetch is
 // still cached briefly (see the source clients) to stay polite to the upstreams.
@@ -51,8 +52,11 @@ export default async function Home() {
       </section>
 
       <section className="section">
-        <div className="card">
-          <h2>{t('Stichwort-Alarm für den Stadtrat')}</h2>
+        <div className="card" style={{ maxWidth: 640 }}>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Icon name="mail" aria-hidden={true} style={{ backgroundColor: 'var(--kern-color-action-default)' }} />
+            {t('Stichwort-Alarm für den Stadtrat')}
+          </h2>
           <p className="lead" style={{ fontSize: 15 }}>
             {t(
               'Lass dich per E-Mail benachrichtigen, sobald deine Themen — eine Straße, „Radweg", „Kita", der Hengsteysee — auf einer Tagesordnung des Herdecker Rats erscheinen.',

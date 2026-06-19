@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useT } from './i18n';
+import { Button, Icon } from './kern';
 
 interface Pickup {
   type: string;
@@ -138,18 +139,18 @@ export function AbfallCard() {
             <p className="metric-detail" style={{ margin: 0 }}>
               {t('Standort bestimmen für deine nächste Abfuhr:')}
             </p>
-            <button
-              className="btn btn-secondary"
+            <Button
+              variant="secondary"
               type="button"
               onClick={useMyLocation}
               disabled={geoState === 'locating'}
-            >
-              {geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
-            </button>
+              text={geoState === 'locating' ? t('Standort…') : t('📍 Meinen Standort verwenden')}
+            />
             {geoMsg && (
-              <p className="status err" style={{ margin: 0 }}>
-                {geoMsg}
-              </p>
+              <div className="status err" role="alert" style={{ margin: 0 }}>
+                <Icon name="danger" aria-hidden={true} />
+                <span>{geoMsg}</span>
+              </div>
             )}
           </div>
         ) : nextTwo.length > 0 ? (
@@ -178,7 +179,10 @@ export function AbfallCard() {
         )}
       </div>
       <div className="data-card-foot">
-        <Link href="/muell">{addr ? t('Alle Termine →') : t('Adresse manuell eingeben →')}</Link>
+        <Link href="/muell" className="kern-link kern-link--small">
+          {addr ? t('Alle Termine') : t('Adresse manuell eingeben')}
+          <Icon name="arrow-forward" aria-hidden={true} />
+        </Link>
       </div>
     </div>
   );

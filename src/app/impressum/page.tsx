@@ -7,7 +7,7 @@ export const metadata = { title: 'Impressum — Digital.Herdecke' };
 export default function ImpressumPage() {
   return (
     <section className="section prose">
-      <FlagStack />
+      <FlagStack className="flag-stack--row" />
       <h1>Impressum</h1>
 
       <p>Angaben gemäß § 5 DDG</p>

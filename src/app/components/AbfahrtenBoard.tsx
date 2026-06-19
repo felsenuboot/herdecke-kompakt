@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useT } from './i18n';
+import { SelectInput, Button, Badge } from './kern';
 
 interface Stop {
   id: string;
@@ -28,7 +29,11 @@ function hm(iso: string): string {
 
 export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
   const { t } = useT();
-  const [stopId, setStopId] = useState(stops[0]?.id ?? 'de:05954:2269');
+  // Prefer the main station (Herdecke Bf) as the default; fall back to the first
+  // stop only if it isn't in the list.
+  const [stopId, setStopId] = useState(
+    () => stops.find((s) => s.id === 'de:05954:2269')?.id ?? stops[0]?.id ?? 'de:05954:2269',
+  );
   const [board, setBoard] = useState<Board | null>(null);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -71,23 +76,23 @@ export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
 
   return (
     <div>
-      <div className="muell-fields" style={{ maxWidth: 480 }}>
-        <div style={{ flex: 1 }}>
-          <label htmlFor="stop">{t('Haltestelle in Herdecke')}</label>
-          <select id="stop" className="stop-select" value={stopId} onChange={(e) => setStopId(e.target.value)}>
-            {stops.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div style={{ maxWidth: 480 }}>
+        <SelectInput
+          id="stop"
+          name="stop"
+          label={t('Haltestelle in Herdecke')}
+          value={stopId}
+          onChange={(e) => setStopId(e.target.value)}
+          options={stops.map((s) => ({ value: s.id, label: s.name }))}
+        />
       </div>
-      <button type="button" className="btn" style={{ marginTop: 10 }} onClick={saveDefault}>
-        {saved ? t('✓ Als Standard gespeichert') : t('Als Standard für die Startseite')}
-      </button>
 
-      <div style={{ marginTop: 18 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0 4px' }}>
+        {current && <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{current.name}</h2>}
+        <Badge variant="success" title={t('Echtzeit')} />
+      </div>
+
+      <div style={{ marginTop: 8 }}>
         {loading ? (
           <div className="skeleton" style={{ height: 120 }} />
         ) : board && board.departures.length > 0 ? (
@@ -106,6 +111,17 @@ export function AbfahrtenBoard({ stops }: { stops: Stop[] }) {
         ) : (
           <p className="muted">Zurzeit keine Abfahrten an dieser Haltestelle.</p>
         )}
+      </div>
+
+      <div style={{ marginTop: 18 }}>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={saveDefault}
+          icon={saved ? { name: 'check' } : undefined}
+          iconLeft={true}
+          text={saved ? t('Als Standard gespeichert') : t('Als Standard für die Startseite')}
+        />
       </div>
     </div>
   );

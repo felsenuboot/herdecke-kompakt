@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useT } from './i18n';
+import { Badge } from './kern';
 
 export interface DashboardItem {
   id: string;
@@ -94,13 +95,15 @@ export function DashboardGrid({ items }: { items: DashboardItem[] }) {
 
   return (
     <>
-      <div className="dashboard-toolbar">
-        <span>{t('⠿ Kacheln am Griff anordnen')}</span>
+      <div className="dashboard-head">
+        <h2>{t('Überblick')}</h2>
+        <span className="rule" />
         {customised && (
           <button type="button" className="linklike" onClick={reset}>
             {t('Zurücksetzen')}
           </button>
         )}
+        <Badge variant="success" title={t('Live-Daten')} />
       </div>
       <div className="overview">
         {ordered.map((id) => (

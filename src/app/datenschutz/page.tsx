@@ -7,7 +7,7 @@ export const metadata = { title: 'Datenschutz — Digital.Herdecke' };
 export default function DatenschutzPage() {
   return (
     <section className="section prose">
-      <FlagStack />
+      <FlagStack className="flag-stack--row" />
       <h1>Datenschutzerklärung</h1>
 
       <h2>1. Datenschutz auf einen Blick</h2>

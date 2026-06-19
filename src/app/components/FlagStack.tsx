@@ -12,9 +12,9 @@ const STAR_POS: [number, number][] = [
   [18, 19], [14.5, 18.1], [11.9, 15.5], [11, 12], [11.9, 8.5], [14.5, 5.9],
 ];
 
-export function FlagStack() {
+export function FlagStack({ className }: { className?: string } = {}) {
   return (
-    <div className="flag-stack">
+    <div className={className ? `flag-stack ${className}` : 'flag-stack'}>
       {/* Europäische Union */}
       <svg className="flag" viewBox="0 0 36 24" role="img" aria-label="Europäische Union">
         <title>Europäische Union</title>
