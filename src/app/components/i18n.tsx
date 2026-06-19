@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from 'react';
 import { translate, BCP47, LOCALES, LOCALE_NAMES, type Locale } from '@/lib/i18n';
+import { InputPrimitive } from './kern';
 
 const LocaleContext = createContext<Locale>('de');
 
@@ -22,17 +23,14 @@ export function LocaleSwitcher() {
     location.reload();
   }
   return (
-    <select
-      className="locale-switcher"
-      aria-label="Sprache / Language / Мова"
-      value={locale}
-      onChange={(e) => change(e.target.value as Locale)}
-    >
-      {LOCALES.map((l) => (
-        <option key={l} value={l}>
-          {LOCALE_NAMES[l]}
-        </option>
-      ))}
-    </select>
+    <div className="locale-select">
+      <InputPrimitive.Select
+        id="locale-switcher"
+        aria-label="Sprache / Language / Мова"
+        value={locale}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => change(e.target.value as Locale)}
+        options={LOCALES.map((l) => ({ value: l, label: LOCALE_NAMES[l] }))}
+      />
+    </div>
   );
 }

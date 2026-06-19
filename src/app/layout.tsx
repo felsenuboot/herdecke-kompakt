@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import '@publicplan/kern-react-kit/index.css';
 import './globals.css';
 import { ShareButton } from './components/ShareButton';
 import { I18nProvider } from './components/i18n';
@@ -7,6 +8,11 @@ import { SiteNav } from './components/SiteNav';
 import { getT } from '@/lib/i18n-server';
 
 const THEME_SCRIPT = `(function () {
+  function set(t) {
+    var el = document.documentElement;
+    el.dataset.theme = t;
+    el.dataset.kernTheme = t; // drives the KERN --kern-color-* tokens
+  }
   try {
     var stored = null;
     try { stored = localStorage.getItem('theme'); } catch (e) {}
@@ -16,9 +22,9 @@ const THEME_SCRIPT = `(function () {
     } else {
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    document.documentElement.dataset.theme = theme;
+    set(theme);
   } catch (e) {
-    document.documentElement.dataset.theme = 'light';
+    set('light');
   }
 })();`;
 
@@ -31,15 +37,19 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { locale, t } = await getT();
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} data-kern-theme="light" suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <I18nProvider locale={locale}>
           <header className="site-header">
             <div className="container">
               <Link href="/" className="brand" aria-label={t('Herdecke — Startseite')}>
+                <svg className="brand-flag" viewBox="0 0 36 24" role="img" aria-hidden="true">
+                  <rect width="36" height="12" fill="#DA121A" />
+                  <rect width="36" height="12" y="12" fill="#FFFFFF" />
+                </svg>
                 <span>
-                  Herdecke<span className="brand-dot">.Digital</span>
+                  Digital<span className="brand-dot">.</span>Herdecke
                 </span>
               </Link>
               <SiteNav />
@@ -48,11 +58,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main className="container">{children}</main>
           <footer className="site-footer">
             <div className="container">
+              <span className="footer-brand">Digital.Herdecke</span>
               <span>{t('Ein unabhängiges Bürger-Projekt. Keine offizielle Seite der Stadt Herdecke.')}</span>
               <Link href="/datenschutz">{t('Datenschutz')}</Link>
               <Link href="/impressum">{t('Impressum')}</Link>
               <a href="https://github.com/felsenuboot/herdecke-digital" target="_blank" rel="noreferrer">
                 GitHub
+              </a>
+              <a
+                className="footer-spacer"
+                href="https://gitlab.opencode.de/kern-ux/pattern-library"
+                target="_blank"
+                rel="noreferrer"
+                title={t('Gestaltet mit dem KERN Design-System')}
+              >
+                {t('Design')}: KERN ↗
               </a>
               <ShareButton />
             </div>

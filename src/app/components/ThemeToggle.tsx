@@ -2,14 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useT } from './i18n';
+import { Icon } from './kern';
 
 type Theme = 'light' | 'dark';
+
+/** Keep the app's own attribute and KERN's token attribute in lock-step. */
+function applyTheme(next: Theme) {
+  const el = document.documentElement;
+  el.dataset.theme = next;
+  el.dataset.kernTheme = next; // drives the --kern-color-* tokens
+}
 
 export function ThemeToggle() {
   const { t } = useT();
   // Render a stable, deterministic initial markup on the server and the first
   // client paint to avoid a hydration mismatch; the real theme is read in the
-  // effect below (the inline head script has already set dataset.theme).
+  // effect below (the inline head script has already set the attributes).
   const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
@@ -29,7 +37,7 @@ export function ThemeToggle() {
       }
       if (stored === 'dark' || stored === 'light') return;
       const next: Theme = e.matches ? 'dark' : 'light';
-      document.documentElement.dataset.theme = next;
+      applyTheme(next);
       setTheme(next);
     };
     mql.addEventListener('change', onChange);
@@ -38,7 +46,7 @@ export function ThemeToggle() {
 
   function toggle() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
+    applyTheme(next);
     try {
       localStorage.setItem('theme', next);
     } catch {
@@ -47,19 +55,26 @@ export function ThemeToggle() {
     setTheme(next);
   }
 
-  const isDark = theme === 'dark';
+  const isDark = mounted && theme === 'dark';
   const label = isDark ? t('Helles Design einschalten') : t('Dunkles Design einschalten');
+  const accent = 'var(--kern-color-action-default)';
+  const muted = 'var(--kern-color-layout-text-muted)';
 
   return (
     <button
       type="button"
-      className="theme-toggle"
+      className="theme-switch"
       onClick={toggle}
+      role="switch"
+      aria-checked={isDark}
       aria-label={label}
-      aria-pressed={mounted ? isDark : undefined}
       title={label}
     >
-      <span aria-hidden="true">{mounted ? (isDark ? '☀' : '☾') : '◐'}</span>
+      <Icon name="light-mode" size="small" aria-hidden={true} style={{ backgroundColor: isDark ? muted : accent }} />
+      <span className="theme-switch__track" aria-hidden="true">
+        <span className="theme-switch__knob" />
+      </span>
+      <Icon name="dark-mode" size="small" aria-hidden={true} style={{ backgroundColor: isDark ? accent : muted }} />
     </button>
   );
 }
