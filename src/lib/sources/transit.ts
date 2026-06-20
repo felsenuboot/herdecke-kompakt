@@ -1,11 +1,12 @@
-/** Live VRR departures + Herdecke stop directory, via the keyless EFA (rapidJSON). */
+/** Live departures + local stop directory via the keyless EFA (rapidJSON). */
 import { fetchJson } from './http';
+import { city } from '../../config/city';
 
-const EFA = 'https://efa.vrr.de/vrr';
-/** Herdecke Bahnhof — the default stop. */
-export const DEFAULT_STOP = { id: 'de:05954:2269', name: 'Herdecke Bf' } as const;
-/** Herdecke town centre, for the coordinate-based stop search. */
-const CENTER = '7.4309:51.4006';
+const EFA = city.sources.transit.efaBaseUrl;
+/** The default stop (from the active city config). */
+export const DEFAULT_STOP = city.sources.transit.defaultStop;
+/** Town centre as `lon:lat`, for the coordinate-based stop search. */
+const CENTER = `${city.center.lon}:${city.center.lat}`;
 
 export interface Stop {
   id: string;
@@ -35,11 +36,7 @@ interface EfaLocation {
   properties?: { distance?: string | number };
 }
 
-const FALLBACK_STOPS: Stop[] = [
-  { id: 'de:05954:2269', name: 'Herdecke Bf' },
-  { id: 'de:05954:2268', name: 'Herdecke Rathaus' },
-  { id: 'de:05954:2253', name: 'Herdecke Mitte' },
-];
+const FALLBACK_STOPS: Stop[] = city.sources.transit.fallbackStops;
 
 let stopCache: { at: number; stops: Stop[] } | null = null;
 
@@ -51,12 +48,12 @@ export async function getHerdeckeStops(): Promise<Stop[]> {
     // so search a 9 km radius and keep only stops whose locality is Herdecke.
     const url =
       `${EFA}/XML_COORD_REQUEST?outputFormat=rapidJSON&coord=${CENTER}:WGS84[DD.ddddd]` +
-      `&coordOutputFormat=WGS84[DD.ddddd]&type_1=STOP&radius_1=9000&max=900&inclFilter=1`;
+      `&coordOutputFormat=WGS84[DD.ddddd]&type_1=STOP&radius_1=${city.sources.transit.searchRadiusMeters}&max=900&inclFilter=1`;
     const j = await fetchJson<{ locations?: EfaLocation[] }>(url, 86_400);
     const seen = new Set<string>();
     const stops: Stop[] = [];
     for (const s of j.locations ?? []) {
-      if (!s.id || s.parent?.name !== 'Herdecke') continue;
+      if (!s.id || s.parent?.name !== city.localityName) continue;
       if (seen.has(s.id)) continue;
       const name = (s.disassembledName || s.name || '').trim();
       // The upstream occasionally returns unnamed/junk stops whose label is just

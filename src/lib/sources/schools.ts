@@ -6,9 +6,11 @@
  *  - Holidays: OpenHolidays API (keyless) for Nordrhein-Westfalen (DE-NW).
  */
 
+import { city, sourceUserAgent } from '../../config/city';
+
 const SCHULDATEN_CSV = 'https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/schuldaten.csv';
-const HERDECKE_AGS = '05954020';
-const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
+const SCHOOL_AGS = city.ags;
+const UA = sourceUserAgent;
 
 /** Official NRW Schulform key (key_schulformschluessel.csv). */
 const SCHULFORM: Record<string, string> = {
@@ -108,7 +110,7 @@ export async function getHerdeckeSchools(): Promise<School[]> {
     const schools: School[] = lines
       .slice(hIdx + 1)
       .map(parseCsvLine)
-      .filter((f) => f[i.gem] === HERDECKE_AGS)
+      .filter((f) => f[i.gem] === SCHOOL_AGS)
       .map((f) => {
         const form = (f[i.form] ?? '').trim();
         return {
@@ -144,7 +146,7 @@ export async function getSchoolHolidays(monthsAhead = 14): Promise<Holiday[]> {
     to.setMonth(to.getMonth() + monthsAhead);
     const validTo = to.toISOString().slice(0, 10);
     const url =
-      `https://openholidaysapi.org/SchoolHolidays?countryIsoCode=DE&subdivisionCode=DE-NW` +
+      `https://openholidaysapi.org/SchoolHolidays?countryIsoCode=DE&subdivisionCode=${city.state.code}` +
       `&languageIsoCode=DE&validFrom=${today}&validTo=${validTo}`;
     const res = await fetch(url, {
       headers: { 'User-Agent': UA, Accept: 'application/json' },

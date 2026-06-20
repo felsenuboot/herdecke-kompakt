@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { city, sourceUserAgent } from '@/config/city';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -6,8 +7,8 @@ export const dynamic = 'force-dynamic';
 // On-demand reverse geocoding via OpenStreetMap/Nominatim (keyless). Called only
 // when the user taps "use my location", so it stays well within Nominatim's
 // fair-use policy (identify with a User-Agent, ≤1 req/s). For heavy use, swap in
-// the BKG/NRW geocoder.
-const UA = 'Digital.Herdecke/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
+// the BKG/state geocoder.
+const UA = sourceUserAgent;
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -34,8 +35,8 @@ export async function GET(req: Request) {
     const ort = a.city ?? a.town ?? a.village ?? a.municipality ?? '';
     const plz = a.postcode ?? '';
 
-    if (!/herdecke/i.test(ort) && plz !== '58313') {
-      return NextResponse.json({ error: 'Dein Standort liegt außerhalb von Herdecke.' }, { status: 200 });
+    if (!new RegExp(city.name, 'i').test(ort) && !city.postalCodes.includes(plz)) {
+      return NextResponse.json({ error: `Dein Standort liegt außerhalb von ${city.name}.` }, { status: 200 });
     }
     if (!strasse) {
       return NextResponse.json({ error: 'Straße konnte nicht bestimmt werden.' }, { status: 200 });

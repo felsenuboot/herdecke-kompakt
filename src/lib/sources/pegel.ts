@@ -1,8 +1,9 @@
-/** Live Ruhr water level near Herdecke, via the keyless PegelOnline API (WSV). */
+/** Live river water level near the city, via the keyless PegelOnline API (WSV). */
 import { fetchJson } from './http';
+import { city } from '../../config/city';
 
-// Hattingen is the nearest WSV Ruhr gauge to Herdecke (~18.7 km downstream).
-const HATTINGEN_UUID = 'c0594fb5-77ff-4287-9b8d-7ff326afe9ff';
+// The nearest WSV gauge to the city (configured per city).
+const GAUGE_UUID = city.sources.pegel.gaugeUuid;
 const BASE = 'https://www.pegelonline.wsv.de/webservices/rest-api/v2';
 
 export interface RuhrLevel {
@@ -21,14 +22,14 @@ interface CurrentMeasurement {
 export async function getRuhrLevel(): Promise<RuhrLevel | null> {
   try {
     const cur = await fetchJson<CurrentMeasurement>(
-      `${BASE}/stations/${HATTINGEN_UUID}/W/currentmeasurement.json`,
+      `${BASE}/stations/${GAUGE_UUID}/W/currentmeasurement.json`,
       900,
     );
 
     let trend: RuhrLevel['trend'] = null;
     try {
       const series = await fetchJson<CurrentMeasurement[]>(
-        `${BASE}/stations/${HATTINGEN_UUID}/W/measurements.json?start=PT6H`,
+        `${BASE}/stations/${GAUGE_UUID}/W/measurements.json?start=PT6H`,
         900,
       );
       if (series.length >= 2) {
@@ -40,7 +41,13 @@ export async function getRuhrLevel(): Promise<RuhrLevel | null> {
       /* trend is optional */
     }
 
-    return { station: 'Hattingen', cm: cur.value, when: cur.timestamp, km: 18.7, trend };
+    return {
+      station: city.sources.pegel.station,
+      cm: cur.value,
+      when: cur.timestamp,
+      km: city.sources.pegel.distanceKm,
+      trend,
+    };
   } catch {
     return null;
   }

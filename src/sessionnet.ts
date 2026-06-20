@@ -16,12 +16,12 @@
  */
 
 import * as cheerio from 'cheerio';
+import { city, sourceUserAgent } from './config/city';
 
-export const BASE_URL = 'https://sessionnet.owl-it.de/herdecke/bi';
+export const BASE_URL = city.sources.council.baseUrl;
 
 /** Identify the bot honestly with a contact, as good civic-scraping etiquette. */
-const USER_AGENT =
-  'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
+const USER_AGENT = sourceUserAgent;
 
 const REQUEST_TIMEOUT_MS = 20_000;
 

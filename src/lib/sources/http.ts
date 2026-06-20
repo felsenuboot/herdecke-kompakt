@@ -1,5 +1,7 @@
 /** Tiny JSON fetch helper for the open-data source clients: timeout + caching. */
-const UA = 'Herdecke-kompakt/0.1 (open civic-tech; +https://github.com/felsenuboot/herdecke-digital)';
+import { city, sourceUserAgent } from '../../config/city';
+
+const UA = sourceUserAgent;
 
 export async function fetchJson<T = unknown>(url: string, revalidateSeconds = 300, timeoutMs = 10000): Promise<T> {
   const res = await fetch(url, {
@@ -12,5 +14,5 @@ export async function fetchJson<T = unknown>(url: string, revalidateSeconds = 30
   return (await res.json()) as T;
 }
 
-/** Herdecke town centre, used for geo-located queries. */
-export const HERDECKE = { lat: 51.4, lon: 7.43 } as const;
+/** Town centre (from the active city config), used for geo-located queries. */
+export const HERDECKE = city.center;

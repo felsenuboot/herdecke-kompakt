@@ -4,8 +4,9 @@
  * index lags by an hour or two, so this returns null when no value is ready.
  */
 import { fetchJson } from './http';
+import { city } from '../../config/city';
 
-const STATION_ID = '1069';
+const STATION_ID = city.sources.air.stationId;
 
 export interface AirQuality {
   label: string;
