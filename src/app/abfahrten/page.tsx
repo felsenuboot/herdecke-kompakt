@@ -1,4 +1,4 @@
-import { getHerdeckeStops } from '@/lib/sources/transit';
+import { getTransitProvider } from '@/lib/providers/transit';
 import { AbfahrtenBoard } from '../components/AbfahrtenBoard';
 import { getT } from '@/lib/i18n-server';
 import { FlagStack } from '../components/FlagStack';
@@ -8,7 +8,7 @@ export const metadata = { title: 'Abfahrten — Digital.Herdecke' };
 
 export default async function AbfahrtenPage() {
   const { t } = await getT();
-  const stops = await getHerdeckeStops();
+  const stops = await getTransitProvider().getStops();
   return (
     <>
       <section className="hero" style={{ paddingBottom: 8 }}>

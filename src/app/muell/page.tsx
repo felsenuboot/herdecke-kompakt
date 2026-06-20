@@ -1,5 +1,6 @@
 import { MuellForm } from '../components/MuellForm';
-import { wasteInfo } from '@/lib/sources/waste';
+import { getWasteProvider } from '@/lib/providers/waste';
+import { city } from '@/config/city';
 import { getT } from '@/lib/i18n-server';
 import { FlagStack } from '../components/FlagStack';
 
@@ -7,6 +8,7 @@ export const metadata = { title: 'Müll-Wecker — Digital.Herdecke' };
 
 export default async function MuellPage() {
   const { t } = await getT();
+  const waste = getWasteProvider();
   return (
     <>
       <section className="hero" style={{ paddingBottom: 8 }}>
@@ -24,9 +26,9 @@ export default async function MuellPage() {
           <MuellForm />
         </div>
         <p className="hint" style={{ marginTop: 14 }}>
-          Datenquelle: <a href={wasteInfo.providerUrl} target="_blank" rel="noreferrer">AHE Ennepe-Ruhr</a> ·{' '}
-          <a href={wasteInfo.calendarUrl} target="_blank" rel="noreferrer">offizieller Abfuhrkalender der Stadt Herdecke</a> (mit iCal-Export) ·{' '}
-          <a href={wasteInfo.pdfUrl} target="_blank" rel="noreferrer">Jahres-PDF</a>. Ohne Gewähr — maßgeblich sind
+          Datenquelle: <a href={waste.info.providerUrl} target="_blank" rel="noreferrer">{waste.info.provider}</a> ·{' '}
+          <a href={waste.info.calendarUrl} target="_blank" rel="noreferrer">offizieller Abfuhrkalender der Stadt {city.name}</a> (mit iCal-Export) ·{' '}
+          <a href={waste.info.pdfUrl} target="_blank" rel="noreferrer">Jahres-PDF</a>. Ohne Gewähr — maßgeblich sind
           die offiziellen Angaben.
         </p>
       </section>

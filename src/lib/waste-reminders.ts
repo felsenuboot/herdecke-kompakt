@@ -4,7 +4,7 @@
  * (sent_alerts keyed by `waste:<date>` so a reminder is never sent twice).
  */
 import { getStore } from './store';
-import { getWastePickups } from './sources/waste-ahe';
+import { getWasteProvider } from './providers/waste';
 import { sendEmail } from './email';
 import { renderWasteReminderEmail } from './render-email';
 
@@ -26,7 +26,7 @@ export async function runWasteReminders(): Promise<WasteReminderResult> {
       const key = `waste:${tomorrow}`;
       if (await store.alreadySent(sub.id, key)) continue;
 
-      const res = await getWastePickups(sub.street!, sub.hnr ?? '');
+      const res = await getWasteProvider().getPickups(sub.street!, sub.hnr ?? '');
       const due = res.pickups.filter((p) => p.date === tomorrow);
       if (!due.length) continue;
 

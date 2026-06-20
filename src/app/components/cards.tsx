@@ -7,7 +7,7 @@ import { WarningsList } from './WarningsList';
 import { getWeather, getWarnings } from '@/lib/sources/weather';
 import { getRuhrLevel } from '@/lib/sources/pegel';
 import { getAirQuality } from '@/lib/sources/air';
-import { getSchoolHolidays } from '@/lib/sources/schools';
+import { getSchoolProvider } from '@/lib/providers/schools';
 import { getCouncilProvider } from '@/lib/providers/council';
 import { getT } from '@/lib/i18n-server';
 import { city } from '@/config/city';
@@ -172,7 +172,7 @@ export async function PegelCard() {
 
 export async function SchulferienCard() {
   const { t } = await getT();
-  const holidays = await getSchoolHolidays();
+  const holidays = await getSchoolProvider().getHolidays();
   const next = holidays[0];
   if (!next) {
     return (

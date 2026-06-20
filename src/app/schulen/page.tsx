@@ -1,4 +1,4 @@
-import { getHerdeckeSchools, getSchoolHolidays, type School } from '@/lib/sources/schools';
+import { getSchoolProvider, type School } from '@/lib/providers/schools';
 import { getT } from '@/lib/i18n-server';
 import { FlagStack } from '../components/FlagStack';
 
@@ -12,7 +12,8 @@ function dmy(iso: string): string {
 
 export default async function SchulenPage() {
   const { t } = await getT();
-  const [schools, holidays] = await Promise.all([getHerdeckeSchools(), getSchoolHolidays()]);
+  const schoolProvider = getSchoolProvider();
+  const [schools, holidays] = await Promise.all([schoolProvider.getSchools(), schoolProvider.getHolidays()]);
 
   const groups: { label: string; items: School[] }[] = [];
   for (const s of schools) {

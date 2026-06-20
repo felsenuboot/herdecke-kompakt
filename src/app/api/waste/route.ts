@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getWastePickups } from '@/lib/sources/waste-ahe';
+import { getWasteProvider } from '@/lib/providers/waste';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,6 +10,6 @@ export async function GET(req: Request) {
   const hnr = (url.searchParams.get('hnr') ?? '').slice(0, 10).trim();
   if (!strasse) return NextResponse.json({ error: 'Bitte gib eine Straße an.' }, { status: 400 });
 
-  const result = await getWastePickups(strasse, hnr);
+  const result = await getWasteProvider().getPickups(strasse, hnr);
   return NextResponse.json(result);
 }

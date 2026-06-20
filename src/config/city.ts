@@ -48,6 +48,7 @@ export interface CityConfig {
     weather: { enabled: boolean };
     transit: {
       enabled: boolean;
+      kind: 'efa';
       efaBaseUrl: string;
       defaultStop: { id: string; name: string };
       fallbackStops: { id: string; name: string }[];
@@ -64,11 +65,11 @@ export interface CityConfig {
     air: { enabled: boolean; stationId: string };
     waste: {
       enabled: boolean;
-      provider: 'ahe';
+      kind: 'ahe';
       links: { provider: string; calendarUrl: string; pdfUrl: string; providerUrl: string };
     };
     /** School directory — state-scoped via `state.code`. */
-    schools: { enabled: boolean };
+    schools: { enabled: boolean; kind: 'nrw' };
     /** School holidays — state-scoped via `state.code`. */
     holidays: { enabled: boolean };
     council: { enabled: boolean; kind: 'sessionnet'; baseUrl: string };
@@ -101,6 +102,7 @@ export const herdecke: CityConfig = {
     weather: { enabled: true },
     transit: {
       enabled: true,
+      kind: 'efa',
       efaBaseUrl: 'https://efa.vrr.de/vrr',
       defaultStop: { id: 'de:05954:2269', name: 'Herdecke Bf' },
       fallbackStops: [
@@ -121,7 +123,7 @@ export const herdecke: CityConfig = {
     air: { enabled: true, stationId: '1069' },
     waste: {
       enabled: true,
-      provider: 'ahe',
+      kind: 'ahe',
       links: {
         provider: 'AHE GmbH (Ennepe-Ruhr)',
         calendarUrl: 'https://www.herdecke.de/portal/seiten/abfuhrkalender-900000008-37460.html',
@@ -129,7 +131,7 @@ export const herdecke: CityConfig = {
         providerUrl: 'https://www.ahe.de/abfuhrtermine/herdecke/',
       },
     },
-    schools: { enabled: true },
+    schools: { enabled: true, kind: 'nrw' },
     holidays: { enabled: true },
     council: { enabled: true, kind: 'sessionnet', baseUrl: 'https://sessionnet.owl-it.de/herdecke/bi' },
   },

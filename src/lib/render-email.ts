@@ -1,7 +1,7 @@
 import { config } from './config';
 import type { Subscription } from './store';
 import type { AgendaItem, MeetingAgenda } from './providers/council';
-import type { Pickup } from './sources/waste-ahe';
+import type { Pickup } from './providers/waste';
 import { wordmarkText } from '../config/city';
 
 export interface AlertMatch {

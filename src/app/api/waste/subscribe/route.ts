@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getStore } from '@/lib/store';
 import { sendEmail } from '@/lib/email';
 import { renderWasteConfirmEmail } from '@/lib/render-email';
-import { getWastePickups } from '@/lib/sources/waste-ahe';
+import { getWasteProvider } from '@/lib/providers/waste';
 import { config } from '@/lib/config';
 
 export const runtime = 'nodejs';
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   const hnr = parsed.data.hnr ?? '';
 
   // Only subscribe addresses that actually resolve to a collection schedule.
-  const check = await getWastePickups(parsed.data.strasse, hnr);
+  const check = await getWasteProvider().getPickups(parsed.data.strasse, hnr);
   if (check.error || check.pickups.length === 0) {
     return NextResponse.json(
       { error: check.error ?? 'Für diese Adresse wurden keine Termine gefunden — bitte Straße/Hausnummer prüfen.' },
