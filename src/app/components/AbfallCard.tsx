@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useT } from './i18n';
 import { Button, Icon } from './kern';
+import { geoErrorMessage, GEO_OPTIONS } from '@/lib/geo';
 
 interface Pickup {
   type: string;
@@ -108,11 +109,11 @@ export function AbfallCard() {
           setGeoMsg(t('Adresse konnte nicht bestimmt werden.'));
         }
       },
-      () => {
+      (err) => {
         setGeoState('err');
-        setGeoMsg(t('Standortzugriff wurde abgelehnt.'));
+        setGeoMsg(t(geoErrorMessage(err.code)));
       },
-      { enableHighAccuracy: true, timeout: 10_000 },
+      GEO_OPTIONS,
     );
   }
 

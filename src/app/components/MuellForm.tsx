@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useT } from './i18n';
 import { TextInput, EmailInput, Button, Icon } from './kern';
+import { geoErrorMessage, GEO_OPTIONS } from '@/lib/geo';
 
 interface Pickup {
   type: string;
@@ -141,11 +142,11 @@ export function MuellForm() {
           setGeoMsg('Adresse konnte nicht bestimmt werden.');
         }
       },
-      () => {
+      (err) => {
         setGeoState('err');
-        setGeoMsg('Standortzugriff wurde abgelehnt.');
+        setGeoMsg(geoErrorMessage(err.code));
       },
-      { enableHighAccuracy: true, timeout: 10_000 },
+      GEO_OPTIONS,
     );
   }
 
