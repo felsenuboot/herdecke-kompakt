@@ -59,29 +59,34 @@ export function SiteNav() {
     };
   }, [open]);
 
-  // Desktop: keep the nav inline next to the brand + utilities while it fits;
-  // when it no longer does (e.g. a long language like Ukrainian) drop it onto
-  // its own full-width row below. Measured so it's language-agnostic, not a
-  // guessed breakpoint. Mobile (<=768px) is handled by the hamburger in CSS.
+  // Desktop: keep the nav inline next to the brand + utilities while it fits.
+  // Only if it genuinely doesn't fit (a narrow window with a long language)
+  // collapse to the hamburger — measured, so it's language-agnostic rather than
+  // a guessed breakpoint. Mobile (<=768px) always uses the hamburger via CSS.
   useEffect(() => {
     const nav = navRef.current;
     const container = nav?.closest<HTMLElement>('.container') ?? null;
     const header = nav?.closest<HTMLElement>('.site-header') ?? null;
     if (!nav || !container || !header) return;
 
-    let naturalNav = 0;
+    let navW = 0;
+    let utilsW = 0;
     function measure() {
       if (!nav || !container || !header) return;
       if (window.innerWidth <= 768) {
-        header.classList.remove('is-tworow');
+        header.classList.remove('is-collapsed');
         return;
       }
-      // Natural nav width is only meaningful while it's laid out inline.
-      if (!header.classList.contains('is-tworow')) naturalNav = nav.scrollWidth;
+      // Cache the natural widths while inline; when collapsed the nav and
+      // utilities move into the hidden dropdown and can no longer be measured.
+      if (!header.classList.contains('is-collapsed')) {
+        navW = nav.scrollWidth;
+        const u = container.querySelector<HTMLElement>('.nav-utils');
+        if (u) utilsW = u.offsetWidth;
+      }
       const brand = container.querySelector<HTMLElement>('.brand');
-      const utils = container.querySelector<HTMLElement>('.nav-utils');
-      const needed = (brand?.offsetWidth ?? 0) + naturalNav + (utils?.offsetWidth ?? 0) + 48;
-      header.classList.toggle('is-tworow', needed > container.clientWidth);
+      const needed = (brand?.offsetWidth ?? 0) + navW + utilsW + 56;
+      header.classList.toggle('is-collapsed', needed > container.clientWidth);
     }
 
     measure();
