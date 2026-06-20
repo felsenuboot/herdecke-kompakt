@@ -9,7 +9,7 @@
  * will use; the CLI lets us verify extraction against the live portal.
  */
 
-import { listUpcomingMeetings, fetchMeetingAgenda, type MeetingAgenda } from './sessionnet';
+import { getCouncilProvider, type MeetingAgenda } from './lib/providers/council';
 import { prepareKeywords, matchKeywords } from './match';
 
 const DEFAULT_KEYWORDS = ['Radweg', 'Radverkehr', 'Kita', 'Klima', 'Straße', 'Schule', 'Baum', 'Hengstey', 'Spielplatz', 'Wohnen'];
@@ -45,9 +45,10 @@ interface Hit {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  const council = getCouncilProvider();
 
   process.stderr.write(`Listing meetings for the next ${args.months} month(s)…\n`);
-  const meetings = await listUpcomingMeetings({ months: args.months });
+  const meetings = await council.listUpcomingMeetings({ months: args.months });
 
   if (args.list) {
     if (args.json) {
@@ -69,7 +70,7 @@ async function main() {
   for (const m of meetings) {
     let agenda: MeetingAgenda;
     try {
-      agenda = await fetchMeetingAgenda(m);
+      agenda = await council.fetchMeetingAgenda(m);
     } catch (err) {
       process.stderr.write(`  ! ${m.committee} ${m.date}: ${(err as Error).message}\n`);
       continue;

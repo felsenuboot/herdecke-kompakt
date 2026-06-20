@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { fetchMeetingAgenda, type MeetingAgenda } from '@/sessionnet';
+import { getCouncilProvider, type MeetingAgenda } from '@/lib/providers/council';
 import { Icon } from '../../components/kern';
 
 export const revalidate = 1800;
@@ -7,6 +7,7 @@ export const revalidate = 1800;
 export default async function MeetingPage({ params }: { params: Promise<{ ksinr: string }> }) {
   const { ksinr } = await params;
   const id = Number(ksinr);
+  const council = getCouncilProvider();
 
   let agenda: MeetingAgenda | null = null;
   let error: string | null = null;
@@ -14,7 +15,7 @@ export default async function MeetingPage({ params }: { params: Promise<{ ksinr:
     error = 'Ungültige Sitzungs-ID.';
   } else {
     try {
-      agenda = await fetchMeetingAgenda(id);
+      agenda = await council.fetchMeetingAgenda(id);
     } catch (err) {
       error = (err as Error).message;
     }

@@ -6,7 +6,7 @@
  * each (subscriber, item) in `sent_alerts` so it's never re-sent.
  */
 
-import { listUpcomingMeetings, fetchMeetingAgenda, type MeetingAgenda } from '../sessionnet';
+import { getCouncilProvider, type MeetingAgenda } from './providers/council';
 import { prepareKeywords, matchKeywords } from '../match';
 import { hashSubject } from './tokens';
 import { sendEmail } from './email';
@@ -26,6 +26,7 @@ export interface ScanResult {
 }
 
 export async function runScan(opts: { months?: number; delayMs?: number } = {}): Promise<ScanResult> {
+  const council = getCouncilProvider();
   const months = opts.months ?? config.scanMonths;
   const delayMs = opts.delayMs ?? 300;
   const store = await getStore();
@@ -47,13 +48,13 @@ export async function runScan(opts: { months?: number; delayMs?: number } = {}):
   const prepared = subs.map((sub) => ({ sub, keywords: prepareKeywords(sub.keywords) }));
 
   const perSub = new Map<string, AlertMatch[]>();
-  const meetings = await listUpcomingMeetings({ months });
+  const meetings = await council.listUpcomingMeetings({ months });
   result.meetings = meetings.length;
 
   for (const m of meetings) {
     let agenda: MeetingAgenda;
     try {
-      agenda = await fetchMeetingAgenda(m);
+      agenda = await council.fetchMeetingAgenda(m);
     } catch (err) {
       result.errors.push(`${m.committee} ${m.date}: ${(err as Error).message}`);
       continue;

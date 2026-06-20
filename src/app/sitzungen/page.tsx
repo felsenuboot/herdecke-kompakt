@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { listUpcomingMeetings, type Meeting } from '@/sessionnet';
+import { getCouncilProvider, type Meeting } from '@/lib/providers/council';
+import { city } from '@/config/city';
 import { getT } from '@/lib/i18n-server';
 import { FlagStack } from '../components/FlagStack';
 
@@ -13,10 +14,11 @@ function formatDate(iso: string): string {
 
 export default async function SitzungenPage() {
   const { t } = await getT();
+  const council = getCouncilProvider();
   let meetings: Meeting[] = [];
   let error: string | null = null;
   try {
-    meetings = await listUpcomingMeetings({ months: 4 });
+    meetings = await council.listUpcomingMeetings({ months: 4 });
   } catch (err) {
     error = (err as Error).message;
   }
@@ -50,8 +52,8 @@ export default async function SitzungenPage() {
         )}
         <p className="hint" style={{ marginTop: 12 }}>
           {t('Quelle:')}{' '}
-          <a href="https://sessionnet.owl-it.de/herdecke/bi/" target="_blank" rel="noreferrer">
-            Ratsinformationssystem der Stadt Herdecke
+          <a href={council.portalUrl} target="_blank" rel="noreferrer">
+            Ratsinformationssystem der Stadt {city.name}
           </a>
           .
         </p>

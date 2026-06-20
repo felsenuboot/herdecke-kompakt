@@ -1,6 +1,6 @@
 import { config } from './config';
 import type { Subscription } from './store';
-import type { AgendaItem, MeetingAgenda } from '../sessionnet';
+import type { AgendaItem, MeetingAgenda } from './providers/council';
 import type { Pickup } from './sources/waste-ahe';
 import { wordmarkText } from '../config/city';
 
