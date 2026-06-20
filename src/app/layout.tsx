@@ -7,7 +7,7 @@ import { I18nProvider } from './components/i18n';
 import { SiteNav } from './components/SiteNav';
 import { StripeFlag } from './components/FlagStack';
 import { getT } from '@/lib/i18n-server';
-import { city, wordmarkText } from '@/config/city';
+import { city, wordmarkText, metaTitleSuffix, metaDescription } from '@/config/city';
 
 const THEME_SCRIPT = `(function () {
   function set(t) {
@@ -31,8 +31,8 @@ const THEME_SCRIPT = `(function () {
 })();`;
 
 export const metadata: Metadata = {
-  title: `${wordmarkText} — Wetter, Verkehr, Ruhr-Pegel & Stadtrat`,
-  description: `Das Wichtigste aus ${city.name} auf einen Blick: aktuelles Wetter und Unwetterwarnungen, nächste Abfahrten, Ruhr-Pegel, Müllabfuhr — plus Stichwort-Alarme für den Stadtrat.`,
+  title: `${wordmarkText} — ${metaTitleSuffix}`,
+  description: metaDescription,
 };
 
 export const viewport: Viewport = {

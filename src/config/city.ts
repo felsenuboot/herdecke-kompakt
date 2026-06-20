@@ -73,6 +73,12 @@ export interface CityConfig {
     holidays: { enabled: boolean };
     council: { enabled: boolean; kind: 'sessionnet'; baseUrl: string };
   };
+
+  /** Optional SEO overrides. If unset, the page title suffix and meta
+   *  description are derived from the active features (so a city without a
+   *  river / council, with a differently-named river, or with more sources,
+   *  gets correct metadata automatically). */
+  seo?: { titleSuffix?: string; description?: string };
 }
 
 export const herdecke: CityConfig = {
@@ -137,3 +143,33 @@ export const sourceUserAgent = `${city.userAgent} (open civic-tech; +${city.repo
 
 /** Plain wordmark text, e.g. "Digital.Herdecke" (the accented dot is markup). */
 export const wordmarkText = `${city.wordmark.prefix}.${city.wordmark.suffix}`;
+
+const FEATURE_ORDER = ['weather', 'transit', 'pegel', 'air', 'waste', 'schools', 'council'] as const;
+
+function featureLabel(key: (typeof FEATURE_ORDER)[number]): string {
+  switch (key) {
+    case 'weather':
+      return 'Wetter & Warnungen';
+    case 'transit':
+      return 'Abfahrten';
+    case 'pegel':
+      return `${city.sources.pegel.river}-Pegel`;
+    case 'air':
+      return 'Luftqualität';
+    case 'waste':
+      return 'Müllabfuhr';
+    case 'schools':
+      return 'Schulen & Ferien';
+    case 'council':
+      return 'Stadtrat';
+  }
+}
+
+/** Labels of the features this city actually has (enabled), in display order. */
+export const activeFeatureLabels: string[] = FEATURE_ORDER.filter((k) => city.sources[k].enabled).map(featureLabel);
+
+/** Page-title suffix + meta description — derived from the active features (or
+ *  overridden per city via `city.seo`), so they adapt to each city's sources. */
+export const metaTitleSuffix = city.seo?.titleSuffix ?? activeFeatureLabels.slice(0, 4).join(', ');
+export const metaDescription =
+  city.seo?.description ?? `Das Wichtigste aus ${city.name} auf einen Blick: ${activeFeatureLabels.join(', ')}.`;
