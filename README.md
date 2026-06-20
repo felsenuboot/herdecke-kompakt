@@ -8,6 +8,8 @@ air quality, the waste calendar, and the city council — plus **keyword alerts*
 email you when your topics (a street, „Radweg", „Kita", the Hengsteysee) appear on a
 council agenda. An open civic-tech project built entirely on public open data.
 
+![The deployed App](screenshot.png)
+
 > Status: **working MVP** — a live overview dashboard plus council keyword alerts
 > (double opt-in, daily cron email). Runs locally with zero setup; deploy to Vercel
 > with Neon + Resend. See [Deploy](#deploy).
